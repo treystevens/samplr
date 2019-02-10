@@ -1,7 +1,19 @@
 import Keyboard from './Keyboard';
 
+const audioContext: AudioContext = new AudioContext();
+const keyboard: Keyboard = new Keyboard(audioContext);
+keyboard.consolePads();
 
-const globalKeyboard = new Keyboard();
 
+const load = document.querySelector('.load');
 
-console.log('Hello world :)')
+load.addEventListener('click', ()=> {
+    
+    keyboard.pads[104].setKeyCode(117)
+
+    keyboard.consolePads();
+})
+
+window.addEventListener('keypress', (evt) => {
+    keyboard.captureWindowEvent(evt);
+})
