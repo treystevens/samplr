@@ -12,9 +12,6 @@ module.exports = {
         }
         ]
     },
-    devServer: {
-        contentBase: './public'
-    },
     resolve: {
         extensions: [ '.tsx', '.ts', '.js' ]
     },
@@ -23,5 +20,5 @@ module.exports = {
         path: path.resolve(__dirname, 'public/scripts')
     },
     target: 'web',
-    mode: 'development'
+    mode: 'development',
 };
