@@ -11,6 +11,7 @@ export default abstract class Pad{
     audioSource: AudioBufferSourceNode
     songURL: string
     keyboard: Keyboard
+    padElement: HTMLElement
 
 
     constructor(keyboard: Keyboard, keyCode: number, audioContext: AudioContext){
@@ -25,13 +26,20 @@ export default abstract class Pad{
         return this.keyCode;
     }
 
+    getAudioBuffer(): AudioBuffer{
+        return this.audioBuffer;
+    }
+
     setKeyCode(keyCode: number):void{
 
-        const previousKeyCode = this.keyCode;
+        const prevKeyCode = this.keyCode;
         this.keyCode = keyCode;
+        this.keyboard.setPad(this, prevKeyCode);
+        this.setPadElementText();
+    }
 
-        this.keyboard.setPad(this, previousKeyCode);
-
+    setAudioBuffer(audioBuffer: AudioBuffer): void{
+        this.audioBuffer = audioBuffer;
     }
 
     establishAudioSource(){
@@ -43,6 +51,15 @@ export default abstract class Pad{
     play(){
         this.establishAudioSource();
         this.audioSource.start();
+    }
+
+    setPadElementText(){
+        if(this.keyCode >= 97 || this.keyCode <= 122){
+            this.padElement.textContent = String.fromCharCode(this.keyCode - 32);
+        }
+        else{
+            this.padElement.textContent = String.fromCharCode(this.keyCode);
+        }
     }
 
 }
