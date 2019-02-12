@@ -2,16 +2,12 @@ import Keyboard from './Keyboard';
 
 const audioContext: AudioContext = new AudioContext();
 const keyboard: Keyboard = new Keyboard(audioContext);
-keyboard.consolePads();
+const audioFile = document.querySelector('.audio-file')
 
 
-const load = document.querySelector('.load');
-
-load.addEventListener('click', ()=> {
+// Load audio file into Sampler
+audioFile.addEventListener('input', (evt) =>{
     
-    keyboard.pads[104].setKeyCode(117)
-
-    keyboard.consolePads();
 })
 
 window.addEventListener('keypress', (evt) => {
