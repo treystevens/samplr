@@ -16,16 +16,19 @@ const mockKeys = [{
 export default class Keyboard{
 
     padSet: any = {};
+    private swapFlag: boolean = false;
+    private refPad: Pad;
 
     // Initiliaze drum and sampler pads
     constructor(audioContext: AudioContext){
         
         for(let i = 0; i < 3; i++){    
             const drumPad: Pad = new DrumPad(defaultDrumSamples[i].songURL,this, defaultDrumSamples[i].keyCode, audioContext);
-            const samplerPad: Pad = new SamplerPad(this, mockKeys[i].keyCode, audioContext)
+            // const samplerPad: Pad = new SamplerPad(this, mockKeys[i].keyCode, audioContext)
             this.padSet[drumPad.getKeyCode()] = drumPad;
-            this.padSet[samplerPad.getKeyCode()] = samplerPad;
+            // this.padSet[samplerPad.getKeyCode()] = samplerPad;
         }
+
     }
 
 
@@ -37,6 +40,12 @@ export default class Keyboard{
     * 
     **/
     captureWindowEvent(evt: KeyboardEvent): void{
+        if(this.swapFlag) {
+            this.refPad.setKeyCode(evt.keyCode);       
+            this.refPad = null;
+            this.toggleSwapFlag();
+            return; 
+        }
         if(this.padSet[evt.keyCode]) this.padSet[evt.keyCode].play();
     }
 
@@ -50,22 +59,39 @@ export default class Keyboard{
     *
     * @public
     * @param {Pad} pad
-    * @param {number} keyCode - Previous keyCode of the pad
+    * @param {number} prevKeyCode - Previous keyCode of the pad
     * 
     **/
-    setPad(pad: Pad, keyCode: number):void{
+    setPad(pad: Pad, prevKeyCode: number):void{
+        
+        delete this.padSet[prevKeyCode];
 
-        delete this.padSet[keyCode];
 
         if (this.padSet[pad.getKeyCode()]){
-            const occupyingPad = this.padSet[pad.getKeyCode()]
-            occupyingPad.setKeyCode(keyCode);
-
+            const occupyingPad: Pad = this.padSet[pad.getKeyCode()];
+            
+            occupyingPad.setKeyCode(prevKeyCode);
+            
+            
             this.padSet[pad.getKeyCode()] = pad;
+            this.padSet[occupyingPad.getKeyCode()] = occupyingPad;
+
+            
+            
         }
         else{
             this.padSet[pad.getKeyCode()] = pad;
         }
+
+    }
+
+    setReferencePad(pad: Pad): void{
+        this.refPad = pad;
+        this.toggleSwapFlag();
+    }
+
+    toggleSwapFlag(): void{
+        this.swapFlag ? this.swapFlag = false : this.swapFlag = true;
     }
 
 
