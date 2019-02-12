@@ -5,17 +5,16 @@ export default class DrumPad extends Pad{
 
     
 
-    constructor(songURL: string, keyboard:Keyboard, keyCode: number, audioContext: AudioContext){
+    constructor(defaultSampleURL: string, keyboard:Keyboard, keyCode: number, audioContext: AudioContext){
         super(keyboard, keyCode, audioContext);
-        this.songURL = songURL;
+        this.defaultSampleURL = defaultSampleURL;
         this.fetchDefaultSample();  
-        this.buildPadHTML();
-          
+        this.buildPadHTML();    
     }
 
     fetchDefaultSample(): void{
 
-        fetch(this.songURL)
+        fetch(this.defaultSampleURL)
         .then(response =>  response.arrayBuffer())
         .then(arrayBuffer => this.audioContext.decodeAudioData(arrayBuffer))
         .then((audioBuffer) => {
@@ -27,10 +26,8 @@ export default class DrumPad extends Pad{
         })
     }
     
-
-
     buildPadHTML(){
-        const drumMachine = document.querySelector('.drum-machine')
+        const drumMachine = document.querySelector('.drum-machine');
 
         const article = document.createElement('article');
         const drumPadContainer = document.createElement('div');
@@ -41,13 +38,15 @@ export default class DrumPad extends Pad{
         const drumPad = document.createElement('div');
         const loadBtnLabel = document.createElement('label');
         const loadBtn = document.createElement('input');
-        const resetBtn = document.createElement('button');
+        const resetSampleBtn = document.createElement('button');
 
         const padControls = document.createElement('div');
-        const gainText = document.createElement('span');
-        const gainInput = document.createElement('input');
+        const gainSpanText = document.createElement('span');
+        const gainSlider = document.createElement('input');
+        const gainInputText = document.createElement('input');
         const pitchText = document.createElement('span');
-        const pitchInput = document.createElement('input');
+        const pitchSlider = document.createElement('input');
+        const pitchInputText = document.createElement('input');
 
 
         loadBtnLabel.setAttribute('for', 'load-pad');
@@ -55,20 +54,46 @@ export default class DrumPad extends Pad{
         loadBtn.type = 'file';
         loadBtn.id = 'load-pad';
         loadBtn.style.visibility = 'hidden';
+
+
+        gainSlider.type = 'range';
+
+        gainSlider.setAttribute('max', '6');
+        gainSlider.setAttribute('min', '-70');
+        gainSlider.setAttribute('value', '0');
+        gainInputText.value = '0';
+
+        pitchSlider.type = 'range';
+        pitchSlider.setAttribute('max', '12');
+        pitchSlider.setAttribute('min', '-12');
+        pitchSlider.setAttribute('value', '0');
+        pitchSlider.setAttribute('step', '1');
+        pitchInputText.value = '0';
+
         
-        resetBtn.textContent = 'Reset';
-        gainText.textContent = 'Gain';
+        resetSampleBtn.textContent = 'Reset Sample';
+        gainSpanText.textContent = 'Gain';
         pitchText.textContent = 'Pitch';
 
         drumPad.textContent = String.fromCharCode(this.keyCode);
 
         this.padElement = drumPad;
+        this.gainElementInput = gainInputText;
+        this.gainSlider = gainSlider
+
+        this.pitchElementInput = pitchInputText;
+        this.pitchSlider = pitchSlider
+        
 
         this.padListener(drumPad);
 
         this.loadListener(loadBtn);
-        this.resetListener(resetBtn);
+        this.resetListener(resetSampleBtn);
         this.swapListener(swapIcon);
+        this.gainSliderListener(gainSlider)
+        this.pitchSliderListener(pitchSlider)
+        this.gainInputFieldListener(gainInputText);
+        this.pitchInputFieldListener(pitchInputText);
         this.setPadElementText();
 
 
@@ -83,11 +108,13 @@ export default class DrumPad extends Pad{
         drumPadContainer.appendChild(drumPad);
         drumPadContainer.appendChild(loadBtnLabel);
         drumPadContainer.appendChild(loadBtn);
-        drumPadContainer.appendChild(resetBtn);
-        padControls.appendChild(gainText);
-        padControls.appendChild(gainInput);
+        drumPadContainer.appendChild(resetSampleBtn);
+        padControls.appendChild(gainSpanText);
+        padControls.appendChild(gainInputText);
+        padControls.appendChild(gainSlider);
         padControls.appendChild(pitchText);
-        padControls.appendChild(pitchInput);
+        padControls.appendChild(pitchInputText);
+        padControls.appendChild(pitchSlider);
 
 
         // Mock Layout
@@ -112,27 +139,52 @@ export default class DrumPad extends Pad{
 
     }
 
-
     padListener(elem: any){
         elem.addEventListener('click', () => {
             this.play();
         })
     }
 
-    gainListener(elem: Element){
-        elem.addEventListener('mousemove', (evt) => {
-            // this.gainInput = evt.target
+    gainSliderListener(elem: HTMLInputElement){
+        elem.addEventListener('input', (evt) => {
+            const volume = Number(evt.target.value);
+            this.gainInput = volume;
+            this.gainSlider = elem;         
+            this.setGainElementInputText(); 
         })
     }
 
-    pitchListener(elem: Element){
-        elem.addEventListener('mousemove', (evt) => {
-            // this.pitchInput = evt.target
-            // this.keyboard.captureWindowEvent(evt);
+    gainInputFieldListener(elem: HTMLInputElement){
+        elem.addEventListener('input', (evt) => {
+            const value = parseInt(evt.target.value)
+            
+            
+            if(value > 6) this.gainElementInput.value = '6';
+            if (value < -70) this.gainElementInput.value = '-70';
+
+            
+            this.setGainSlider();
+            
+
+            
         })
     }
 
-    
+    pitchInputFieldListener(elem: HTMLInputElement){
+        elem.addEventListener('input', (evt) => {
+            const value = Number(evt.target.value)
+            if(value > 12) this.pitchElementInput.value = '12';
+            if (value < -12) this.pitchElementInput.value = '-12';
+            this.setPitchSlider();
+        })
+    }
+
+    pitchSliderListener(elem: HTMLInputElement){
+        elem.addEventListener('input', (evt) => {
+            this.pitchInput = Number(evt.target.value);
+            this.setPitchElementInputText();
+        })
+    }
 
     loadListener(elem: Element){
         elem.addEventListener('input', (evt) => {
@@ -148,9 +200,7 @@ export default class DrumPad extends Pad{
 
     swapListener(elem: Element){
         elem.addEventListener('click', (evt) => {
-            console.log(evt);
             this.keyboard.setReferencePad(this);
-            // this.setKeyCode(evt.target.value)
         })
     }
 
@@ -159,15 +209,12 @@ export default class DrumPad extends Pad{
 
         const _this = this;
 
-        console.log(evt);
-
         const fileReader = new FileReader();
 
         fileReader.readAsArrayBuffer(evt.target.files[0]);
-        fileReader.onload = function(evt){
+        fileReader.onload = function(){
             
-    
-            let audioBuffer = _this.audioContext.decodeAudioData(fileReader.result as any);
+            const audioBuffer = _this.audioContext.decodeAudioData(fileReader.result as any);
     
             audioBuffer.then((res: AudioBuffer) => {
                 _this.setAudioBuffer(res);
