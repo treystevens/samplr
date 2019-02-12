@@ -4,21 +4,26 @@ export default abstract class Pad{
 
     keyCode: number
     audioBuffer: AudioBuffer
-    gainKnob: AudioNode
+    gainInput: number
     filterKnob: AudioNode
-    pitchKnob: number
+    pitchInput: number
     audioContext: AudioContext
     audioSource: AudioBufferSourceNode
-    songURL: string
+    defaultSampleURL: string
     keyboard: Keyboard
     padElement: HTMLElement
+    gainElementInput: HTMLInputElement
+    pitchElementInput: HTMLInputElement
+    gainSlider: HTMLInputElement
+    pitchSlider: HTMLInputElement
 
 
     constructor(keyboard: Keyboard, keyCode: number, audioContext: AudioContext){
         this.keyboard = keyboard;
         this.keyCode = keyCode;
         this.audioContext = audioContext;
-        this.gainKnob = audioContext.createGain();
+        this.gainInput = 1;
+        this.pitchInput = 0;
         this.filterKnob = audioContext.createBiquadFilter();
     }
 
@@ -42,10 +47,24 @@ export default abstract class Pad{
         this.audioBuffer = audioBuffer;
     }
 
+
+
     establishAudioSource(){
+
+        const gainNode = this.audioContext.createGain();
+        const gainLevel = Math.pow(10, this.gainInput / 20);
+
         this.audioSource = this.audioContext.createBufferSource();
         this.audioSource.buffer = this.audioBuffer;
-        this.audioSource.connect(this.audioContext.destination);
+
+        gainNode.gain.value = gainLevel;
+
+        // +100 and -100 detune the source up or down by one semitone, 
+        // while +1200 and -1200 detune it up or down by one octave.
+        // pitchInput is range [-12, 12] (inclusive);
+        this.audioSource.detune.value = this.pitchInput * 100;
+        this.audioSource.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
     }
 
     play(){
@@ -60,6 +79,22 @@ export default abstract class Pad{
         else{
             this.padElement.textContent = String.fromCharCode(this.keyCode);
         }
+    }
+
+    setGainElementInputText(){
+        this.gainElementInput.value = String(this.gainInput);
+    }
+
+    setPitchElementInputText(){
+        this.pitchElementInput.value = String(this.pitchInput);
+    }
+
+    setGainSlider(){
+        this.gainSlider.value = this.gainElementInput.value;
+    }
+
+    setPitchSlider(){
+        this.pitchSlider.value = this.pitchElementInput.value;
     }
 
 }
