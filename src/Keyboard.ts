@@ -1,92 +1,84 @@
+import Trigger from './Trigger';
 import Pad from './Pad';
-import DrumPad from './DrumPad';
-import SamplerPad from './SamplerPad';
-import { defaultDrumSamples } from './defaultPadSamples';
-
-
-const mockKeys = [{
-    keyCode: 97
-}, {
-    keyCode: 115
-},{
-    keyCode: 119
-}
-]
+import Key from './Key';
+import { hipHopDrumKit } from './samples/drumKitSamples';
+import { electricPiano } from './samples/samplerSamples';
 
 export default class Keyboard{
-
-    padSet: any = {};
+    
+    triggerSet: any = {};
     private swapFlag: boolean = false;
-    private refPad: Pad;
+    private refTrigger: Trigger;
 
-    // Initiliaze drum and sampler pads
+    // Initiliaze drum and sampler Triggers
     constructor(audioContext: AudioContext){
         
-        for(let i = 0; i < 3; i++){    
-            const drumPad: Pad = new DrumPad(defaultDrumSamples[i].songURL,this, defaultDrumSamples[i].keyCode, audioContext);
-            // const samplerPad: Pad = new SamplerPad(this, mockKeys[i].keyCode, audioContext)
-            this.padSet[drumPad.getKeyCode()] = drumPad;
-            // this.padSet[samplerPad.getKeyCode()] = samplerPad;
+        for(let i = 0; i < 13; i++){    
+            const pad: Trigger = new Pad(audioContext, this, electricPiano[i].songURL, electricPiano[i].charCode);
+            // const samplerTrigger: Trigger = new SamplerTrigger(this, elecPianoSamples[i].charCode, audioContext)
+            this.triggerSet[pad.getCharCode()] = pad;
+            // this.triggerSet[samplerTrigger.getCharCode()] = samplerTrigger;
         }
+        
 
     }
 
 
      /**
-    * Invoke Pad's play method if it has an associated key
+    * Invoke Trigger's play method if it has an associated key
     *
     * @public
     * @param {evt} evt
     * 
     **/
     captureWindowEvent(evt: KeyboardEvent): void{
+
         if(this.swapFlag) {
-            this.refPad.setKeyCode(evt.keyCode);       
-            this.refPad = null;
+            this.refTrigger.setCharCode(evt.charCode);       
+            this.refTrigger = null;
             this.toggleSwapFlag();
             return; 
         }
-        if(this.padSet[evt.keyCode]) this.padSet[evt.keyCode].play();
+        if(this.triggerSet[evt.charCode]) this.triggerSet[evt.charCode].play();
     }
 
-    consolePads(){
-        console.log(this.padSet);
+    consoleTriggers(){
+        console.log(this.triggerSet);
+        // console.log(defaultDrumSamples)
     }
 
 
     /**
-    * Sets or swaps a Pad in padSet
+    * Sets or swaps a Trigger in triggerSet
     *
     * @public
-    * @param {Pad} pad
-    * @param {number} prevKeyCode - Previous keyCode of the pad
+    * @param {Trigger} trigger
+    * @param {number} prevCharCode - Previous charCode of the Trigger
     * 
     **/
-    setPad(pad: Pad, prevKeyCode: number):void{
+    setTrigger(trigger: Trigger, prevCharCode: number):void{
         
-        delete this.padSet[prevKeyCode];
+        delete this.triggerSet[prevCharCode];
 
 
-        if (this.padSet[pad.getKeyCode()]){
-            const occupyingPad: Pad = this.padSet[pad.getKeyCode()];
+        if (this.triggerSet[trigger.getCharCode()]){
+            const occupyingTrigger: Trigger = this.triggerSet[trigger.getCharCode()];
             
-            occupyingPad.setKeyCode(prevKeyCode);
+            occupyingTrigger.setCharCode(prevCharCode);
             
             
-            this.padSet[pad.getKeyCode()] = pad;
-            this.padSet[occupyingPad.getKeyCode()] = occupyingPad;
-
-            
+            this.triggerSet[trigger.getCharCode()] = trigger;
+            this.triggerSet[occupyingTrigger.getCharCode()] = occupyingTrigger;
             
         }
         else{
-            this.padSet[pad.getKeyCode()] = pad;
+            this.triggerSet[trigger.getCharCode()] = trigger;
         }
 
     }
 
-    setReferencePad(pad: Pad): void{
-        this.refPad = pad;
+    setReferenceTrigger(trigger: Trigger): void{
+        this.refTrigger = trigger;
         this.toggleSwapFlag();
     }
 
