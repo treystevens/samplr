@@ -1,35 +1,35 @@
 export const hipHopDrumKit: any = [
     {
         songURL: 'https://res.cloudinary.com/dr4eajzak/video/upload/v1549691476/Snare_178.wav',
-        charCode: 122
+        key: 'z'
     },
     {
         songURL: 'https://res.cloudinary.com/dr4eajzak/video/upload/v1549697588/Hat_67.wav',
-        charCode: 120
+        key: 'x'
     }, 
     {
         songURL: 'https://res.cloudinary.com/dr4eajzak/video/upload/v1549697609/Dilla_Kk_3.wav',
-        charCode: 99
+        key: 'c'
     },
     {
         songURL: 'https://res.cloudinary.com/dr4eajzak/video/upload/v1549691476/Snare_178.wav',
-        charCode: 118
+        key: 'v'
     },
     {
         songURL: 'https://res.cloudinary.com/dr4eajzak/video/upload/v1549697588/Hat_67.wav',
-        charCode: 98
+        key: 'b'
     }, 
     {
         songURL: 'https://res.cloudinary.com/dr4eajzak/video/upload/v1549697588/Hat_67.wav',
-        charCode: 110
+        key: 'n'
     }, 
     {
         songURL: 'https://res.cloudinary.com/dr4eajzak/video/upload/v1549697609/Dilla_Kk_3.wav',
-        charCode: 109
+        key: 'm'
     }, 
     {
         songURL: 'https://res.cloudinary.com/dr4eajzak/video/upload/v1549697609/Dilla_Kk_3.wav',
-        charCode: 44
+        key: ','
     }
 ]
 
