@@ -1,13 +1,13 @@
-import Keyboard from './Keyboard';
+import Sampler from './Sampler';
 import Trigger from './Trigger';
 
 export default class Pad extends Trigger{ 
 
-    constructor(audioContext: AudioContext, keyboard:Keyboard, defaultSampleURL: string, charCode: number){
-        super(keyboard, charCode, audioContext);
+    constructor(audioContext: AudioContext, sampler: Sampler, charCode: number, defaultSampleURL: string,){
+        super(audioContext, sampler, charCode);
         this.defaultSampleURL = defaultSampleURL;
         this.fetchDefaultSample();  
-        this.buildPadHTML();    
+        this.buildHTML();    
     }
 
     fetchDefaultSample(): void{
@@ -23,8 +23,71 @@ export default class Pad extends Trigger{
             console.log(err);
         })
     }
+
+    buildGainElements(): any{
+
+        const gainObj: any = {};
+
+        const gainSpanText = document.createElement('span');
+        const gainSlider = document.createElement('input');
+        const gainInputText = document.createElement('input');
+
+        gainSlider.type = 'range';
+
+        gainSlider.setAttribute('max', '6');
+        gainSlider.setAttribute('min', '-70');
+        gainSlider.setAttribute('value', '0');
+        gainInputText.value = '0';
+
+        gainSpanText.textContent = 'Gain';
+
+        this.gainElementInput = gainInputText;
+        this.gainSlider = gainSlider
+
+        this.gainSliderListener(gainSlider)
+        this.gainInputFieldListener(gainInputText);
+
+        gainObj.gainSpanText = gainSpanText;
+        gainObj.gainSlider = gainSlider;
+        gainObj.gainInputText = gainInputText;
+
+        return gainObj;
+    }
+
+    buildPitchElements(): any{
+        const pitchElements: any = {};
+
+        const pitchText = document.createElement('span');
+        const pitchSlider = document.createElement('input');
+        const pitchInputText = document.createElement('input');
+
+        pitchSlider.type = 'range';
+        pitchSlider.setAttribute('max', '12');
+        pitchSlider.setAttribute('min', '-12');
+        pitchSlider.setAttribute('value', '0');
+        pitchSlider.setAttribute('step', '1');
+        pitchInputText.value = '0';
+
+        pitchText.textContent = 'Pitch';
+
+
+        this.pitchElementInput = pitchInputText;
+        this.pitchSlider = pitchSlider
+
+        this.pitchSliderListener(pitchSlider)
+        
+        this.pitchInputFieldListener(pitchInputText);
+
+
+        pitchElements.pitchText = pitchText;
+        pitchElements.pitchSlider = pitchSlider;
+        pitchElements.pitchInputText = pitchInputText;
+
+
+        return pitchElements;
+    }
     
-    buildPadHTML(){
+    buildHTML(){
         const drumMachine = document.querySelector('.drum-machine');
 
         const article = document.createElement('article');
@@ -38,49 +101,26 @@ export default class Pad extends Trigger{
         const loadBtn = document.createElement('input');
         const resetSampleBtn = document.createElement('button');
 
+        const gainElements = this.buildGainElements();
+        const pitchElements = this.buildPitchElements();
+
         const padControls = document.createElement('div');
-        const gainSpanText = document.createElement('span');
-        const gainSlider = document.createElement('input');
-        const gainInputText = document.createElement('input');
-        const pitchText = document.createElement('span');
-        const pitchSlider = document.createElement('input');
-        const pitchInputText = document.createElement('input');
-
-
+        
+        
         loadBtnLabel.setAttribute('for', 'load-pad');
         loadBtnLabel.textContent = 'Load';
         loadBtn.type = 'file';
         loadBtn.id = 'load-pad';
         loadBtn.style.visibility = 'hidden';
 
-
-        gainSlider.type = 'range';
-
-        gainSlider.setAttribute('max', '6');
-        gainSlider.setAttribute('min', '-70');
-        gainSlider.setAttribute('value', '0');
-        gainInputText.value = '0';
-
-        pitchSlider.type = 'range';
-        pitchSlider.setAttribute('max', '12');
-        pitchSlider.setAttribute('min', '-12');
-        pitchSlider.setAttribute('value', '0');
-        pitchSlider.setAttribute('step', '1');
-        pitchInputText.value = '0';
-
         
         resetSampleBtn.textContent = 'Reset Sample';
-        gainSpanText.textContent = 'Gain';
-        pitchText.textContent = 'Pitch';
+        
+        
 
         Pad.textContent = String.fromCharCode(this.charCode);
 
         this.padElement = Pad;
-        this.gainElementInput = gainInputText;
-        this.gainSlider = gainSlider
-
-        this.pitchElementInput = pitchInputText;
-        this.pitchSlider = pitchSlider
         
 
         this.padListener(Pad);
@@ -88,10 +128,8 @@ export default class Pad extends Trigger{
         this.loadListener(loadBtn);
         this.resetListener(resetSampleBtn);
         this.swapListener(swapIcon);
-        this.gainSliderListener(gainSlider)
-        this.pitchSliderListener(pitchSlider)
-        this.gainInputFieldListener(gainInputText);
-        this.pitchInputFieldListener(pitchInputText);
+        
+    
         this.setPadElementText();
 
 
@@ -100,19 +138,23 @@ export default class Pad extends Trigger{
 
 
         drumMachine.appendChild(article);
+
         article.appendChild(swapIcon);
         article.appendChild(PadContainer);
         article.appendChild(padControls);
+
         PadContainer.appendChild(Pad);
         PadContainer.appendChild(loadBtnLabel);
         PadContainer.appendChild(loadBtn);
         PadContainer.appendChild(resetSampleBtn);
-        padControls.appendChild(gainSpanText);
-        padControls.appendChild(gainInputText);
-        padControls.appendChild(gainSlider);
-        padControls.appendChild(pitchText);
-        padControls.appendChild(pitchInputText);
-        padControls.appendChild(pitchSlider);
+
+        padControls.appendChild(gainElements.gainSpanText);
+        padControls.appendChild(gainElements.gainInputText);
+        padControls.appendChild(gainElements.gainSlider);
+
+        padControls.appendChild(pitchElements.pitchText);
+        padControls.appendChild(pitchElements.pitchInputText);
+        padControls.appendChild(pitchElements.pitchSlider);
 
 
         // Mock Layout
@@ -133,8 +175,6 @@ export default class Pad extends Trigger{
         //         <button class="drum-pad__pitch">{Pitch volume knob}</button>
         //     </div>
         // </article>
-
-
     }
 
     padListener(elem: any){
@@ -198,7 +238,7 @@ export default class Pad extends Trigger{
 
     swapListener(elem: Element){
         elem.addEventListener('click', (evt) => {
-            this.keyboard.setReferencePad(this);
+            this.sampler.setReferenceTrigger(this);
         })
     }
 
