@@ -1,4 +1,4 @@
-import Keyboard from './Keyboard';
+import Sampler from './Sampler';
 import { masterStreamNode, scriptNode } from './app';
 
 export let mediasource: any
@@ -6,7 +6,7 @@ export let mediasource: any
 
 export default abstract class Trigger{
 
-    charCode: number
+    key: string
     audioBuffer: AudioBuffer
     gainInput: number
     filterKnob: AudioNode
@@ -14,37 +14,37 @@ export default abstract class Trigger{
     audioContext: AudioContext
     audioSource: AudioBufferSourceNode
     defaultSampleURL: string
-    keyboard: Keyboard
-    padElement: HTMLElement
+    sampler: Sampler
+    triggerElement: HTMLElement
     gainElementInput: HTMLInputElement
     pitchElementInput: HTMLInputElement
     gainSlider: HTMLInputElement
     pitchSlider: HTMLInputElement
 
 
-    constructor(keyboard: Keyboard, charCode: number, audioContext: AudioContext){
-        this.keyboard = keyboard;
-        this.charCode = charCode;
+    constructor(audioContext: AudioContext, sampler: Sampler, key: string){
+        this.sampler = sampler;
+        this.key = key;
         this.audioContext = audioContext;
         this.gainInput = 1;
         this.pitchInput = 0;
         this.filterKnob = audioContext.createBiquadFilter();
     }
 
-    getCharCode(): number{
-        return this.charCode;
+    getKey(): string{
+        return this.key;
     }
 
     getAudioBuffer(): AudioBuffer{
         return this.audioBuffer;
     }
 
-    setCharCode(charCode: number):void{
+    setKey(key: string):void{
 
-        const prevcharCode = this.charCode;
-        this.charCode = charCode;
-        this.keyboard.setPad(this, prevcharCode);
-        this.setPadElementText();
+        const prevKey = this.key;
+        this.key = key;
+        this.sampler.setTrigger(this, prevKey);
+        this.setTriggerElementText();
     }
 
     setAudioBuffer(audioBuffer: AudioBuffer): void{
@@ -95,12 +95,15 @@ export default abstract class Trigger{
         this.audioSource.start();
     }
 
-    setPadElementText(){
-        if(this.charCode >= 97 || this.charCode <= 122){
-            this.padElement.textContent = String.fromCharCode(this.charCode - 32);
+    setTriggerElementText(){
+        
+        const asciiCode = this.key.charCodeAt(0)
+        
+        if(asciiCode >= 97 && asciiCode <= 122){
+            this.triggerElement.textContent = String.fromCharCode(asciiCode - 32);
         }
         else{
-            this.padElement.textContent = String.fromCharCode(this.charCode);
+            this.triggerElement.textContent = this.key;
         }
     }
 
@@ -120,4 +123,6 @@ export default abstract class Trigger{
         this.pitchSlider.value = this.pitchElementInput.value;
     }
 
+
+    abstract buildHTML(): void
 }
