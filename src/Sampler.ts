@@ -15,7 +15,7 @@ export default class Sampler{
     private audioContext: AudioContext;
     private audioBuffer: AudioBuffer;
 
-    private triggerSet: any = {};
+    // private triggerSet: any = {};
     private padSet: any = {};
     private keySet: any = {};
 
@@ -24,10 +24,8 @@ export default class Sampler{
         this.audioContext = audioContext;
         this.initKeys();
         this.initPads();
-        this.i = 0;
 
-
-        window.addEventListener('keypress', (evt) => {
+        window.addEventListener('keydown', (evt) => {
             this.captureWindowEvent(evt);        
         })
     }
@@ -42,19 +40,14 @@ export default class Sampler{
     **/
     captureWindowEvent(evt: KeyboardEvent): void{
 
-        if(this.swapFlag && !this.keySet[evt.charCode]) {
-            this.refTrigger.setCharCode(evt.charCode);       
+        if(this.swapFlag && !this.keySet[evt.key]) {
+            this.refTrigger.setKey(evt.key);       
             this.refTrigger = null;
             this.toggleSwapFlag();
             return; 
         }
-        if(this.padSet[evt.charCode]) this.padSet[evt.charCode].play();
-        if(this.keySet[evt.charCode]) this.keySet[evt.charCode].play();
-    }
-
-    consoleTriggers(){
-        console.log(this.padSet);
-        // console.log(defaultDrumSamples)
+        if(this.padSet[evt.key]) this.padSet[evt.key].play();
+        if(this.keySet[evt.key]) this.keySet[evt.key].play();
     }
 
 
@@ -63,26 +56,26 @@ export default class Sampler{
     *
     * @public
     * @param {Trigger} trigger
-    * @param {number} prevCharCode - Previous charCode of the Trigger
+    * @param {number} prevKey - Previous key of the Trigger
     * 
     **/
-    setTrigger(trigger: Trigger, prevCharCode: number):void{
+    setTrigger(trigger: Trigger, prevKey: string):void{
         
-        delete this.padSet[prevCharCode];
+        delete this.padSet[prevKey];
 
 
-        if (this.padSet[trigger.getCharCode()]){
-            const occupyingTrigger: Trigger = this.padSet[trigger.getCharCode()];
+        if (this.padSet[trigger.getKey()]){
+            const occupyingTrigger: Trigger = this.padSet[trigger.getKey()];
             
-            occupyingTrigger.setCharCode(prevCharCode);
+            occupyingTrigger.setKey(prevKey);
             
             
-            this.padSet[trigger.getCharCode()] = trigger;
-            this.padSet[occupyingTrigger.getCharCode()] = occupyingTrigger;
+            this.padSet[trigger.getKey()] = trigger;
+            this.padSet[occupyingTrigger.getKey()] = occupyingTrigger;
             
         }
         else{
-            this.padSet[trigger.getCharCode()] = trigger;
+            this.padSet[trigger.getKey()] = trigger;
         }
 
     }
@@ -99,16 +92,16 @@ export default class Sampler{
 
     initPads(){
         for(let i = 0; i < 8; i++){    
-            const pad: Pad = new Pad(this.audioContext, this, hipHopDrumKit[i].charCode, hipHopDrumKit[i].songURL,);
-            this.padSet[pad.getCharCode()] = pad;
+            const pad: Pad = new Pad(this.audioContext, this, hipHopDrumKit[i].key, hipHopDrumKit[i].songURL,);
+            this.padSet[pad.getKey()] = pad;
         }
     }
 
     initKeys(){
         for(let i = 0; i < 13; i++){    
-            const key: Key = new Key(this.audioContext, this, electricPiano[i].charCode, electricPiano[i].songURL);
+            const key: Key = new Key(this.audioContext, this, electricPiano[i].key, electricPiano[i].songURL);
 
-            this.keySet[key.getCharCode()] = key;
+            this.keySet[key.getKey()] = key;
         }
     }
 
