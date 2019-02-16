@@ -30,9 +30,9 @@ export default class Sampler{
     constructor(audioContext: AudioContext){
 
         this.audioContext = audioContext;
-        this.activeKey = this.triggerSet['a'];
         this.initKeys();
         this.initPads();
+        this.activeKey = this.triggerSet['a'];
         
         window.addEventListener('keydown', (evt) => {
             this.captureWindowEvent(evt);        
