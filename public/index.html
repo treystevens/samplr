@@ -8,9 +8,51 @@
     <link rel="stylesheet" href="./styles/style.css">
 </head>
 <body>
-        <div id="waveform"></div>
         <input type="file" class="audio-file" /> 
         <button class="load">Load</button>
+
+        <div class="sampler">
+            <div id="waveform"></div>
+
+            <label>Gain
+                <input class="sampler__gain-text" type="text" value="0"/>
+                <input class="sampler__gain-slider" type="range" max="6" min="-60" value="0"/>
+            </label>
+
+            <label>Pitch
+                <input class="sampler__pitch-text" type="text" value="0"/>
+                <input class="sampler__pitch-slider" type="range" max="12" min="-12" value="0" step="1"/>
+            </label>
+
+            <div>
+                <h3>Filters</h3>
+
+                <div>    
+                    <label> LPF
+                        <input type="radio" class="sampler__filter-option" name="lowpass" value="lowpass" checked/>
+                    </label>
+                    <label> BPF
+                        <input type="radio" class="sampler__filter-option" name="bandpass" value="bandpass"/>
+                    </label>
+                    <label> HPF
+                        <input type="radio" class="sampler__filter-option" name="highpass" value="highpass"/>
+                    </label>
+                </div>
+
+                <label>Frequency
+                    <input class="sampler__frequency-text" type="text" value="20000"/>
+                    <input class="sampler__frequency-slider" type="range" max="20000" min="26" value="20000" step="1"/>
+                </label>
+
+                <label>Q
+                    <input class="sampler__q-text" type="text" value="0"/>
+                    <input class="sampler__q-slider" type="range" max="16" min="0" value="0" step="1"/>
+                </label>
+            </div>
+
+
+            <div class="keys-container"></div>
+        </div>
 
 
         <button class="record">Record</button>
