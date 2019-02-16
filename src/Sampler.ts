@@ -6,7 +6,7 @@ import { hipHopDrumKit } from './samples/drumKitSamples';
 import { electricPiano } from './samples/samplerSamples';
 
 
-enum availablePadsToSwap{
+enum validPadKeys{
     z = 1, 
     x,
     c,
@@ -49,7 +49,7 @@ export default class Sampler{
     **/
     captureWindowEvent(evt: KeyboardEvent): void{
         
-        if(this.swapFlag && availablePadsToSwap[evt.key]) {
+        if(this.swapFlag && validPadKeys[evt.key]) {
             this.refTrigger.setKey(evt.key);       
             this.refTrigger = null;
             this.toggleSwapFlag();
@@ -63,6 +63,11 @@ export default class Sampler{
             this.triggerSet[evt.key].setActive(true)
             this.triggerSet[evt.key].play();
             return;
+        }
+
+        // Stop sound when played
+        if(evt.key === 'Backspace'){
+            this.activeKey.stopSound();
         }
     }
 
@@ -113,6 +118,30 @@ export default class Sampler{
 
     toggleSwapFlag(): void{
         this.swapFlag ? this.swapFlag = false : this.swapFlag = true;
+    }
+
+    decodeBuffer(evt: Event){
+
+        const _this = this;
+
+        const fileReader = new FileReader();
+
+        fileReader.readAsArrayBuffer(evt.target.files[0]);
+        fileReader.onload = function(){
+            
+            const audioBuffer = _this.audioContext.decodeAudioData(fileReader.result as any);
+    
+            audioBuffer.then((res: AudioBuffer) => {
+                for(let trigger in _this.triggerSet){
+                    if(!validPadKeys[trigger]){
+                        _this.triggerSet[trigger].setAudioBuffer(res);
+                    }
+                }
+            })
+            .catch((err: Error) => {
+                console.log(err);
+            })
+        }
     }
 }
 
