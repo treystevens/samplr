@@ -20,6 +20,10 @@ var options = {
     mimeType : 'audio/webm\;codecs=opus'
 }
 
+audioFile.addEventListener('input', (evt) => {
+  sampler.decodeBuffer(evt)
+})
+
 recordBtn.addEventListener('click', () => {
 
     currentlyRecording ? currentlyRecording = false : currentlyRecording = true;
