@@ -236,8 +236,10 @@ export default abstract class Trigger{
         // Show wave form when playing
         wavesurfer.load(this.defaultSampleURL);
         this.audioSource.start();
-        
-        
+    }
+
+    stopSound(){
+            this.audioSource.stop();
     }
 
     setTriggerElementText(){
