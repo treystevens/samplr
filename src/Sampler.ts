@@ -4,7 +4,7 @@ import Pad from './Pad';
 import Key from './Key';
 import { hipHopDrumKit } from './samples/drumKitSamples';
 import { electricPiano } from './samples/samplerSamples';
-
+import { wavesurfer } from './Trigger';
 
 enum validPadKeys{
     z = 1, 
@@ -135,8 +135,9 @@ export default class Sampler{
                 for(let trigger in _this.triggerSet){
                     if(!validPadKeys[trigger]){
                         _this.triggerSet[trigger].setAudioBuffer(res);
+                        _this.triggerSet[trigger].setUserLoadedAudioBlob(evt.target.files[0]);
                     }
-                }
+                }                
             })
             .catch((err: Error) => {
                 console.log(err);

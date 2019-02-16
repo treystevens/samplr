@@ -3,7 +3,7 @@ import { masterStreamNode, scriptNode } from './app';
 
 export let mediasource: any
 
-const wavesurfer: any = WaveSurfer.create({
+export const wavesurfer: any = WaveSurfer.create({
     container: '#waveform',
     waveColor: 'orange',
     progressColor: 'purple'
@@ -34,6 +34,7 @@ export default abstract class Trigger{
     q: number
     filterOptionList: Array<HTMLInputElement>
     userSelectedFilterOption: HTMLElement
+    userLoadedAudioBlob: Blob
 
 
     constructor(audioContext: AudioContext, sampler: Sampler, key: string){
@@ -46,12 +47,13 @@ export default abstract class Trigger{
         this.frequency = 20000;
         this.filterOption = 'lowpass';
         this.active = false;
+        this.userLoadedAudioBlob = null;
 
         this.initAudioControlSelectors();
         this.initAudioControlListeners();    
     }
 
-    setActive(active: boolean){
+    setActive(active: boolean): void{
         this.active = active;
         
         if(this.active){
@@ -100,7 +102,7 @@ export default abstract class Trigger{
         this.filterOptionList = Array.from(document.querySelectorAll('.sampler__filter-option'))
     }
 
-    initAudioControlListeners(){
+    initAudioControlListeners(): void{
         // Gain Input Listeners
         this.gainSlider.addEventListener('input', (evt) => {
             if(this.active){
@@ -192,7 +194,7 @@ export default abstract class Trigger{
         return this.audioBuffer;
     }
 
-    setKey(key: string):void{
+    setKey(key: string): void{
 
         const prevKey = this.key;
         this.key = key;
@@ -204,7 +206,7 @@ export default abstract class Trigger{
         this.audioBuffer = audioBuffer;
     }
 
-    establishAudioSource(){
+    establishAudioSource(): void{
 
         const gainNode = this.audioContext.createGain();
         const gainLevel = Math.pow(10, this.gain / 20);
@@ -231,18 +233,23 @@ export default abstract class Trigger{
         biquadFilter.connect(masterStreamNode);
     }
 
-    play(){
+    play(): void{
         this.establishAudioSource();
         // Show wave form when playing
-        wavesurfer.load(this.defaultSampleURL);
+  
+        if(this.userLoadedAudioBlob) wavesurfer.loadBlob(this.userLoadedAudioBlob);
+        else{
+            wavesurfer.load(this.defaultSampleURL);
+        }
+        
         this.audioSource.start();
     }
 
-    stopSound(){
-            this.audioSource.stop();
+    stopSound(): void{
+        this.audioSource.stop();
     }
 
-    setTriggerElementText(){
+    setTriggerElementText(): void{
         
         const asciiCode = this.key.charCodeAt(0)
         
@@ -254,8 +261,12 @@ export default abstract class Trigger{
         }
     }
 
+    setUserLoadedAudioBlob(blob: Blob): void{
+        this.userLoadedAudioBlob = blob;
+    }
+
     // Decodes an audio file when loaded
-    decodeBuffer(evt: Event){
+    decodeBuffer(evt: Event): void{
 
         const _this = this;
 
@@ -290,7 +301,7 @@ export default abstract class Trigger{
         })
     }
 
-    triggerListener(elem: any){
+    triggerListener(elem: any): void{
         elem.addEventListener('click', () => {
             this.play();
         })
