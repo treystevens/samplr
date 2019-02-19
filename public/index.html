@@ -1,65 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Samplr</title>
-    <link rel="stylesheet" href="./styles/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Samplr</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+  <link rel="stylesheet" href="./styles/style.css" />
 </head>
+
 <body>
-        <input type="file" class="audio-file" /> 
-        <button class="load">Load</button>
+  <main>
+    <section class="load-samples">
+
+      <div class="load-sampler--flex">
+        <button class="btn  load">Load Keys</button>
+        <select name="sampler-select" class="load-sampler-options">
+          <option value="electric-piano" selected>Electric Piano</option>
+          <option value="grand-piano">Grand Piano</option>
+          <option value="guitar">Guitar</option>
+          <option value="bass-guitar">Bass Guitar</option>
+          <option value="horns">Horns</option>
+        </select>
+      </div>
+
+
+      <div class="load-drum-machine--flex">
+        <button class="btn  load">Load Drum Machine</button>
+        <select name="drum-machine-select" class="load-drum-machine-options">
+          <option value="hip-hop" selected>Hip Hop</option>
+          <option value="house">Grand Piano</option>
+          <option value="trap">Trap</option>
+          <option value="african-percussion">African Percussion</option>
+          <option value="live">Live</option>
+        </select>
+      </div>
+
+
+    </section>
+
+    <section class="user">
+      <section class="sampler__container">
 
         <div class="sampler">
+          <input type="file" class="audio-file" />
+          <div class="sampler__wave-frame">
+
             <div id="waveform"></div>
-
-            <label>Gain
-                <input class="sampler__gain-text" type="text" value="0"/>
-                <input class="sampler__gain-slider" type="range" max="6" min="-60" value="0"/>
-            </label>
-
-            <label>Pitch
-                <input class="sampler__pitch-text" type="text" value="0"/>
-                <input class="sampler__pitch-slider" type="range" max="12" min="-12" value="0" step="1"/>
-            </label>
-
-            <div>
-                <h3>Filters</h3>
-
-                <div>    
-                    <label> LPF
-                        <input type="radio" class="sampler__filter-option" name="lowpass" value="lowpass" checked/>
-                    </label>
-                    <label> BPF
-                        <input type="radio" class="sampler__filter-option" name="bandpass" value="bandpass"/>
-                    </label>
-                    <label> HPF
-                        <input type="radio" class="sampler__filter-option" name="highpass" value="highpass"/>
-                    </label>
+            <div class="slider">
+              <div class="slider--flex">
+                <div class="slider__handle slider__handle--start">
+                  1
+                  <div class="slider__handle-bracket"></div>
                 </div>
+                <p class="slider__key slider__key--start"></p>
+              </div>
+              <div class="slider--flex">
+                <div class="slider__handle slider__handle--end">
+                  2
+                  <div class="slider__handle-bracket"></div>
+                </div>
+                <p class="slider__key slider__key--end"></p>
+              </div>
+            </div>
+          </div>
 
-                <label>Frequency
-                    <input class="sampler__frequency-text" type="text" value="20000"/>
-                    <input class="sampler__frequency-slider" type="range" max="20000" min="26" value="20000" step="1"/>
-                </label>
+          <div class="sampler__audio-controls">
 
-                <label>Q
-                    <input class="sampler__q-text" type="text" value="0"/>
-                    <input class="sampler__q-slider" type="range" max="16" min="0" value="0" step="1"/>
-                </label>
+            <div class="sampler__gain-pitch-container">
+              <label class="sampler__control-label  sampler__gain">Gain
+                <input class="sampler__gain-text" type="text" value="0" />
+              </label>
+              <input class="sampler__gain-slider" type="range" max="6" min="-60" value="0" />
+
+
+              <label class="sampler__control-label  sampler__pitch">Pitch
+                <input class="sampler__pitch-text" type="text" value="0" />
+              </label>
+              <input class="sampler__pitch-slider" type="range" max="12" min="-12" value="0" step="1" />
             </div>
 
+            <div class="sampler__filters">
+              <h3 class="sampler__filter-title">Filters</h3>
 
-            <div class="keys-container"></div>
+              <div class="sampler__filter-options">
+                <label>
+                  LPF
+                  <input type="radio" class="sampler__filter-option" name="lowpass" value="lowpass" checked />
+                </label>
+                <label>
+                  BPF
+                  <input type="radio" class="sampler__filter-option" name="bandpass" value="bandpass" />
+                </label>
+                <label>
+                  HPF
+                  <input type="radio" class="sampler__filter-option" name="highpass" value="highpass" />
+                </label>
+              </div>
+
+              <div class="sampler__freq-q-container">
+                <div class="sampler__filter-input-flex sampler__filter-input-flex--freq">
+                  <label class="sampler__control-label  sampler__frequency">Frequency
+                    <input class="sampler__frequency-text" type="text" value="20000" />
+                  </label>
+                  <input class="sampler__frequency-slider" type="range" max="20000" min="26" value="20000" step="1" />
+                </div>
+
+                <div class="sampler__filter-input-flex sampler__filter-input-flex--q">
+                  <label class="sampler__control-label  sampler__q">Q
+                    <input class="sampler__q-text" type="text" value="0" />
+                  </label>
+                  <input class="sampler__q-slider" type="range" max="16" min="0" value="0" step="1" />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
+      </section>
+      <div class="keys-container"></div>
+      <section class="drum-machine"></section>
 
-        <button class="record">Record</button>
+    </section>
 
-        <section class="drum-machine"></section>
-    
-        <script src="https://unpkg.com/wavesurfer.js@2.1.3/dist/wavesurfer.min.js"></script>
-        <script src="./scripts/bundle.js"></script>    
+
+    <section class="options">
+      <p class="options__stop-instructions">Press <button class="btn  options__stop">Shift</button> to stop previous
+        triggered sample</p>
+
+      <div class="options__record-container">
+        <div class="options__record-icon"></div>
+        <button class="btn  options__record">Start Recording</button>
+      </div>
+
+
+      <label class="options__bpm">Set BPM
+        <input class="options__set-bpm" value="120" type="number" />
+      </label>
+
+      <div class="options__metronome-container">
+        <button class="btn  options__metronome">Start Metronome</button>
+        <span class="options__metronome-display">0</span>
+      </div>
+
+    </section>
+
+
+
+    <script src="https://unpkg.com/wavesurfer.js@2.1.3/dist/wavesurfer.min.js"></script>
+    <script src="./scripts/bundle.js"></script>
+  </main>
 </body>
+
 </html>
