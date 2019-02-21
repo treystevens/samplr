@@ -15,24 +15,25 @@
     <section class="load-samples">
 
       <div class="load-sampler--flex">
-        <button class="btn  load">Load Keys</button>
+        <button class="btn  load  load-keys">Load Keys</button>
         <select name="sampler-select" class="load-sampler-options">
           <option value="electric-piano" selected>Electric Piano</option>
           <option value="grand-piano">Grand Piano</option>
           <option value="guitar">Guitar</option>
           <option value="bass-guitar">Bass Guitar</option>
+          <option value="moog-bass">Moog Bass</option>
           <option value="horns">Horns</option>
         </select>
       </div>
 
 
       <div class="load-drum-machine--flex">
-        <button class="btn  load">Load Drum Machine</button>
+        <button class="btn  load  load-pads">Load Pads</button>
         <select name="drum-machine-select" class="load-drum-machine-options">
           <option value="hip-hop" selected>Hip Hop</option>
-          <option value="house">Grand Piano</option>
+          <option value="house">House</option>
           <option value="trap">Trap</option>
-          <option value="african-percussion">African Percussion</option>
+          <option value="african">African</option>
           <option value="live">Live</option>
         </select>
       </div>
@@ -136,12 +137,13 @@
 
 
       <label class="options__bpm">Set BPM
-        <input class="options__set-bpm" value="120" type="number" />
+        <input class="options__set-bpm" value="120" type="number" max="200" min="20"/>
+        
       </label>
 
       <div class="options__metronome-container">
         <button class="btn  options__metronome">Start Metronome</button>
-        <span class="options__metronome-display">0</span>
+        <span class="options__metronome-display">-</span>
       </div>
 
     </section>
