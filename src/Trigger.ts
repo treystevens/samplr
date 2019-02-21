@@ -6,33 +6,34 @@ export let mediasource: any
 export const wavesurfer: any = WaveSurfer.create({
     container: '#waveform',
     waveColor: 'orange',
-    progressColor: 'purple'
+    progressColor: 'purple',
+    height: 80
 });
 
 export default abstract class Trigger{
 
-    key: string
+    active: boolean
     audioBuffer: AudioBuffer
     audioContext: AudioContext
     audioSource: AudioBufferSourceNode
-    defaultSampleURL: string
-    sampler: Sampler
-    triggerElement: HTMLElement
-    gainElementInput: HTMLInputElement
-    pitchElementInput: HTMLInputElement
-    qElementInput: HTMLInputElement
-    frequencyElementInput: HTMLInputElement
-    gainSlider: HTMLInputElement
-    pitchSlider: HTMLInputElement
-    frequencySlider: HTMLInputElement
-    qSlider: HTMLInputElement
-    pitch: number
-    gain: number
-    active: boolean
     filterOption: string
-    frequency: number
-    q: number
     filterOptionList: Array<HTMLInputElement>
+    frequency: number
+    frequencyElementInput: HTMLInputElement
+    frequencySlider: HTMLInputElement
+    gain: number
+    gainElementInput: HTMLInputElement
+    gainSlider: HTMLInputElement
+    key: string
+    pitch: number
+    pitchElementInput: HTMLInputElement
+    pitchSlider: HTMLInputElement
+    q: number
+    qElementInput: HTMLInputElement
+    qSlider: HTMLInputElement
+    sampler: Sampler
+    sampleURL: string
+    triggerElement: HTMLElement
     userSelectedFilterOption: HTMLElement
     userLoadedAudioBlob: Blob
 
@@ -115,6 +116,7 @@ export default abstract class Trigger{
              const value = Number(evt.target.value)
              
              this.gain = value;
+             if(isNaN(value)) this.gain = 0;
              if(value > 6) this.gain = 6;
              if (value < -70) this.gain = -70;
               
@@ -200,6 +202,8 @@ export default abstract class Trigger{
         this.key = key;
         this.sampler.setTrigger(this, prevKey);
         this.setTriggerElementText();
+
+
     }
 
     setAudioBuffer(audioBuffer: AudioBuffer): void{
@@ -239,7 +243,7 @@ export default abstract class Trigger{
   
         if(this.userLoadedAudioBlob) wavesurfer.loadBlob(this.userLoadedAudioBlob);
         else{
-            wavesurfer.load(this.defaultSampleURL);
+            wavesurfer.load(this.sampleURL);
         }
         
         this.audioSource.start();
@@ -287,9 +291,9 @@ export default abstract class Trigger{
         }
     }
 
-    fetchDefaultSample(): void{
-
-        fetch(this.defaultSampleURL)
+    fetchSample(): void{
+       
+        fetch(this.sampleURL)
         .then(response =>  response.arrayBuffer())
         .then(arrayBuffer => this.audioContext.decodeAudioData(arrayBuffer))
         .then((audioBuffer) => {
@@ -301,10 +305,22 @@ export default abstract class Trigger{
         })
     }
 
+    setSampleURL(url: string): void{
+        this.sampleURL = url;
+    }
+
     triggerListener(elem: any): void{
         elem.addEventListener('click', () => {
             this.play();
         })
+    }
+
+    addActiveState(): void{
+        this.triggerElement.classList.add('highlight')
+    }
+
+    removeActiveState(): void{
+        this.triggerElement.classList.remove('highlight')
     }
 
     abstract buildHTML(): void
