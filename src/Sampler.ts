@@ -2,9 +2,11 @@
 import Trigger from './Trigger';
 import Pad from './Pad';
 import Key from './Key';
-import { hipHopDrumKit } from './samples/drumKitSamples';
-import { electricPiano } from './samples/samplerSamples';
+import { hiphopKit, trapKit, houseKit, liveKit, africanKit } from './samples/drumKitSamples';
+import { electricPiano, grandPiano, guitar, bass, moogBass, organ, horns } from './samples/samplerSamples';
 import { wavesurfer } from './Trigger';
+import { removeModal } from './helpers';
+import Slider from './Slider'
 
 enum validPadKeys{
     z = 1, 
@@ -19,13 +21,13 @@ enum validPadKeys{
 
 export default class Sampler{
 
-    
-    private swapFlag: boolean = false;
-    private refTrigger: Trigger;
-    private audioContext: AudioContext;
-    private audioBuffer: AudioBuffer;
-    private triggerSet: any = {};
     private activeKey: Trigger;
+    private audioBuffer: AudioBuffer;
+    private audioContext: AudioContext;
+    private refTrigger: Trigger;
+    private slider: Slider
+    private swapFlag: boolean = false;
+    private triggerSet: any = {};
 
     constructor(audioContext: AudioContext){
 
@@ -33,54 +35,82 @@ export default class Sampler{
         this.initKeys();
         this.initPads();
         this.activeKey = this.triggerSet['a'];
+        this.slider = new Slider();
+        
         
         window.addEventListener('keydown', (evt) => {
             this.captureWindowEvent(evt);        
         });
+
+        window.addEventListener('keyup', (evt) => {
+            if(this.triggerSet[evt.key]) {
+                this.triggerSet[evt.key].removeActiveState();
+                return;
+            }
+            if(document.querySelector('.options__stop').classList.contains('highlight')){
+                document.querySelector('.options__stop').classList.remove('highlight');
+            }
+        })
     }
 
     
     /**
     * Invoke Trigger's play method if it has an associated key
     *
+    * Check if user would like to swap pad keys. Must be a pad
+    * 
     * @public
     * @param {evt} evt
     * 
     **/
     captureWindowEvent(evt: KeyboardEvent): void{
+
         
-        if(this.swapFlag && validPadKeys[evt.key]) {
+        if(this.swapFlag && validPadKeys[evt.key] && isNaN(Number(evt.key))) {
+            
+            removeModal();
             this.refTrigger.setKey(evt.key);       
             this.refTrigger = null;
             this.toggleSwapFlag();
             return; 
         }
-        this.swapFlag = false;
+        if(this.swapFlag){
+            this.swapFlag = false;
+            removeModal();
+            return;
+        }
+       
         
         if(this.triggerSet[evt.key]) {
+            
+            this.triggerSet[evt.key].addActiveState();
             this.activeKey.setActive(false);
             this.activeKey = this.triggerSet[evt.key];
             this.triggerSet[evt.key].setActive(true)
             this.triggerSet[evt.key].play();
+            
             return;
         }
 
         // Stop sound when played
-        if(evt.key === 'Backspace'){
+        if(evt.key === 'Shift'){
+            document.querySelector('.options__stop').classList.add('highlight');
+
+            if(!(document.querySelector('#waveform').firstChild)) return;
             this.activeKey.stopSound();
         }
     }
 
     initPads(){
         for(let i = 0; i < 8; i++){    
-            const pad: Pad = new Pad(this.audioContext, this, hipHopDrumKit[i].key, hipHopDrumKit[i].songURL,);
+            const pad: Pad = new Pad(this.audioContext, this, hiphopKit[i].key, hiphopKit[i].url,);
             this.triggerSet[pad.getKey()] = pad;
         }
     }
 
     initKeys(){
         for(let i = 0; i < 13; i++){    
-            const key: Key = new Key(this.audioContext, this, electricPiano[i].key, electricPiano[i].songURL);
+            const key: Key = new Key(this.audioContext, this, electricPiano[i].key, electricPiano[i].url);
 
             this.triggerSet[key.getKey()] = key;
         }
@@ -116,6 +146,11 @@ export default class Sampler{
         this.toggleSwapFlag();
     }
 
+    removeReferenceTrigger(): void{
+        this.refTrigger = null;
+        this.toggleSwapFlag();
+    }
+
     toggleSwapFlag(): void{
         this.swapFlag ? this.swapFlag = false : this.swapFlag = true;
     }
@@ -144,6 +179,81 @@ export default class Sampler{
             })
         }
     }
-}
 
+    loadPads(drumKit: string){
+
+        let load;
+
+        switch (drumKit) {
+            case 'hip-hop':
+                load = hiphopKit;
+                break;
+            case 'house':
+                load = houseKit;
+                break;
+            case 'live':
+                load = liveKit;
+                break;
+            case 'african-percussion':
+                load = africanKit;
+                break;
+            case 'trap':
+                load = trapKit;
+                break;
+            default:
+                load = hiphopKit
+                break;
+        }
+
+        for(let i = 0; i < load.length; i++){
+
+            const padKey = load[i].key
+            this.triggerSet[padKey].setSampleURL(load[i].url)
+            this.triggerSet[padKey].fetchSample();
+        }
+
+    
+    }
+
+    loadKeys(sampleBank: string){
+        let load;
+
+        switch (sampleBank) {
+            case 'electric-piano':
+                load = electricPiano;
+                break;
+            case 'grand-piano':
+                load = grandPiano;
+                break;
+            case 'organ':
+                load = organ;
+                break;
+            case 'horns':
+                load = horns;
+                break;
+            case 'bass-guitar':
+                load = bass;
+                break;
+            case 'guitar':
+                load = guitar;
+                break;
+            case 'moog-bass':
+                load = moogBass;
+                break;
+            default:
+                load = electricPiano;
+                break;
+        }
+
+        for(let i = 0; i < load.length; i++){
+
+            const keyKey = load[i].key
+            this.triggerSet[keyKey].setSampleURL(load[i].url)
+            this.triggerSet[keyKey].fetchSample();
+        }
+
+
+    }
+
+}
 
