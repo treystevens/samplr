@@ -33,11 +33,11 @@ export default class AudioTasks{
         this.recordBtn.addEventListener('click', () => this.toggleRecording());
         this.metronomeBtn.addEventListener('click', () => this.toggleMetronome());
 
-        this.fetchDefaultSample()
+        this.fetchMetronomeSamples()
     }
 
     // Fetches Metronome sounds & stores them into their appropriate buffer
-    private fetchDefaultSample(): void{
+    private fetchMetronomeSamples(): void{
 
         const metronome = fetch('https://res.cloudinary.com/dr4eajzak/video/upload/v1550624008/Metronome.wav');
         const metronomeUp = fetch('https://res.cloudinary.com/dr4eajzak/video/upload/v1550624008/MetronomeUp.wav');
