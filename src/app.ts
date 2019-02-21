@@ -23,3 +23,13 @@ if (window.matchMedia('screen and (max-width: 820px)').matches) {
   document.querySelector('.options').remove();
   
 }
+
+document.querySelector('.load-pads').addEventListener('click', (evt) => {
+  const padSelection = document.querySelector('.load-drum-machine-options').value;
+  sampler.loadPads(padSelection)
+})
+
+document.querySelector('.load-keys').addEventListener('click', (evt) => {
+  const sampleBankSelection = document.querySelector('.load-sampler-options').value;
+  sampler.loadKeys(sampleBankSelection)
+})
