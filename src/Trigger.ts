@@ -12,30 +12,30 @@ export const wavesurfer: any = WaveSurfer.create({
 
 export default abstract class Trigger{
 
-    active: boolean
-    audioBuffer: AudioBuffer
-    audioContext: AudioContext
-    audioSource: AudioBufferSourceNode
-    filterOption: string
-    filterOptionList: Array<HTMLInputElement>
-    frequency: number
-    frequencyElementInput: HTMLInputElement
-    frequencySlider: HTMLInputElement
-    gain: number
-    gainElementInput: HTMLInputElement
-    gainSlider: HTMLInputElement
-    key: string
-    pitch: number
-    pitchElementInput: HTMLInputElement
-    pitchSlider: HTMLInputElement
-    q: number
-    qElementInput: HTMLInputElement
-    qSlider: HTMLInputElement
-    sampler: Sampler
-    sampleURL: string
-    triggerElement: HTMLElement
-    userSelectedFilterOption: HTMLElement
-    userLoadedAudioBlob: Blob
+    protected active: boolean
+    protected audioBuffer: AudioBuffer
+    protected audioContext: AudioContext
+    protected audioSource: AudioBufferSourceNode
+    protected filterOption: string
+    protected filterOptionList: Array<HTMLInputElement>
+    protected frequency: number
+    protected frequencyElementInput: HTMLInputElement
+    protected frequencySlider: HTMLInputElement
+    protected gain: number
+    protected gainElementInput: HTMLInputElement
+    protected gainSlider: HTMLInputElement
+    protected key: string
+    protected pitch: number
+    protected pitchElementInput: HTMLInputElement
+    protected pitchSlider: HTMLInputElement
+    protected q: number
+    protected qElementInput: HTMLInputElement
+    protected qSlider: HTMLInputElement
+    protected sampler: Sampler
+    protected sampleURL: string
+    protected triggerElement: HTMLElement
+    protected userSelectedFilterOption: HTMLElement
+    protected userLoadedAudioBlob: Blob
 
 
     constructor(audioContext: AudioContext, sampler: Sampler, key: string){
@@ -227,25 +227,25 @@ export default abstract class Trigger{
         // MDN: +100 and -100 detune the source up or down by one semitone, 
         // MDN: while +1200 and -1200 detune it up or down by one octave.
         // this.pitch is range [-12, 12];
-        this.audioSource.detune.value = this.pitch * 100;
+        // !!! - Safari does not support detune property
+        if (this.audioSource.detune !== undefined ) {
+            this.audioSource.detune.value = this.pitch * 100;
+        }
+
         this.audioSource.connect(gainNode);
-        
         gainNode.connect(biquadFilter);
         biquadFilter.connect(this.audioContext.destination)
-
-        // The code right below works for MediaRecorder
         biquadFilter.connect(masterStreamNode);
     }
 
     play(): void{
         this.establishAudioSource();
+
         // Show wave form when playing
-  
         if(this.userLoadedAudioBlob) wavesurfer.loadBlob(this.userLoadedAudioBlob);
         else{
             wavesurfer.load(this.sampleURL);
         }
-        
         this.audioSource.start();
     }
 
@@ -279,7 +279,15 @@ export default abstract class Trigger{
         fileReader.readAsArrayBuffer(evt.target.files[0]);
         fileReader.onload = function(){
             
-            const audioBuffer = _this.audioContext.decodeAudioData(fileReader.result as any);
+            // !!! Safari only supports callback syntax of decodeAudioData
+            // const audioBuffer = _this.audioContext.decodeAudioData(fileReader.result as any);
+
+            const audioBuffer = _this.audioContext.decodeAudioData(fileReader.result, function(buffer){
+                return Promise.resolve(buffer);
+            }, 
+              function(err){
+                return Promise.reject(err);
+            })
     
             audioBuffer.then((res: AudioBuffer) => {
                 _this.setAudioBuffer(res);
@@ -295,7 +303,21 @@ export default abstract class Trigger{
        
         fetch(this.sampleURL)
         .then(response =>  response.arrayBuffer())
-        .then(arrayBuffer => this.audioContext.decodeAudioData(arrayBuffer))
+        .then((arrayBuffer) => {
+
+            // !!! Safari only supports callback syntax of decodeAudioData
+            // this.audioContext.decodeAudioData(arrayBuffer)
+
+            const audioBuffer = this.audioContext.decodeAudioData(arrayBuffer, function(buffer){
+                return Promise.resolve(buffer);
+            }, 
+              function(err){
+                return Promise.reject(err);
+            })
+
+            return audioBuffer
+
+        })
         .then((audioBuffer) => {
             this.setAudioBuffer(audioBuffer);
             this.establishAudioSource();
