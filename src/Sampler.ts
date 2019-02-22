@@ -5,7 +5,6 @@ import Key from './Key';
 import { hiphopKit, trapKit, houseKit, liveKit, africanKit } from './samples/drumKitSamples';
 import { electricPiano, grandPiano, guitar, bass, moogBass, organ, horns } from './samples/samplerSamples';
 import { wavesurfer } from './Trigger';
-import { removeModal } from './helpers';
 import Slider from './Slider'
 
 enum validPadKeys{
@@ -68,7 +67,7 @@ export default class Sampler{
         
         if(this.swapFlag && validPadKeys[evt.key] && isNaN(Number(evt.key))) {
             
-            removeModal();
+            this.removeModal();
             this.refTrigger.setKey(evt.key);       
             this.refTrigger = null;
             this.toggleSwapFlag();
@@ -76,7 +75,7 @@ export default class Sampler{
         }
         if(this.swapFlag){
             this.swapFlag = false;
-            removeModal();
+            this.removeModal();
             return;
         }
        
@@ -261,6 +260,10 @@ export default class Sampler{
         }
 
 
+    }
+
+    removeModal(): void{
+        if(document.querySelector('.modal')) document.querySelector('.modal').remove();
     }
 
 }
