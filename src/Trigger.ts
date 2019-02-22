@@ -39,8 +39,6 @@ export default abstract class Trigger{
     protected userSelectedFilterOption: HTMLElement
     protected userLoadedAudioBlob: Blob
     
-    
-
 
     constructor(audioContext: AudioContext, sampler: Sampler, key: string){
         this.sampler = sampler;
@@ -54,9 +52,6 @@ export default abstract class Trigger{
         this.active = false;
         this.userLoadedAudioBlob = null;
 
-        // Slider Elements
-        this.startSliderPos = parseInt(document.querySelector('.slider__handle--start').style.left)
-        this.endSliderPos = parseInt(document.querySelector('.slider__handle--end').style.left)
 
         this.initAudioControlSelectors();
         this.initAudioControlListeners();    
@@ -210,8 +205,6 @@ export default abstract class Trigger{
         this.key = key;
         this.sampler.setTrigger(this, prevKey);
         this.setTriggerElementText();
-
-
     }
 
     setAudioBuffer(audioBuffer: AudioBuffer): void{
@@ -254,7 +247,23 @@ export default abstract class Trigger{
         else{
             wavesurfer.load(this.sampleURL);
         }
-        this.audioSource.start();
+
+        const startTime = this.pixelsToSeconds(this.startSliderPos);
+        const endTime = this.pixelsToSeconds(this.endSliderPos);
+
+        this.audioSource.start(0, startTime, endTime);
+    }
+
+    pixelsToSeconds(sliderPos: number){
+        const startSlider = document.querySelector('.slider__handle--start');
+        // Sliders have a half width offset, so we want to add this offset back to its position
+        const halfSliderWidth = startSlider.offsetWidth / 2;
+        const songDuration = this.audioSource.buffer.duration;
+        const sliderWidth = document.querySelector('.slider').offsetWidth;
+        const pixelsPerSecond = sliderWidth / songDuration;
+        const sliderTime = (sliderPos + halfSliderWidth) / pixelsPerSecond;
+
+        return sliderTime;
     }
 
     stopSound(): void{
@@ -369,5 +378,10 @@ export default abstract class Trigger{
         return this.endSliderPos;
     }
 
+
+    initSliders(){
+        this.startSliderPos = parseInt(document.querySelector('.slider__handle--start').style.left)
+        this.endSliderPos = parseInt(document.querySelector('.slider__handle--end').style.left)
+    }
     abstract buildHTML(): void
 }
