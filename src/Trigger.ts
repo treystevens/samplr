@@ -16,6 +16,7 @@ export default abstract class Trigger{
     protected audioBuffer: AudioBuffer
     protected audioContext: AudioContext
     protected audioSource: AudioBufferSourceNode
+    protected endSliderPos: number
     protected filterOption: string
     protected filterOptionList: Array<HTMLInputElement>
     protected frequency: number
@@ -33,9 +34,12 @@ export default abstract class Trigger{
     protected qSlider: HTMLInputElement
     protected sampler: Sampler
     protected sampleURL: string
+    protected startSliderPos: number
     protected triggerElement: HTMLElement
     protected userSelectedFilterOption: HTMLElement
     protected userLoadedAudioBlob: Blob
+    
+    
 
 
     constructor(audioContext: AudioContext, sampler: Sampler, key: string){
@@ -49,6 +53,10 @@ export default abstract class Trigger{
         this.filterOption = 'lowpass';
         this.active = false;
         this.userLoadedAudioBlob = null;
+
+        // Slider Elements
+        this.startSliderPos = parseInt(document.querySelector('.slider__handle--start').style.left)
+        this.endSliderPos = parseInt(document.querySelector('.slider__handle--end').style.left)
 
         this.initAudioControlSelectors();
         this.initAudioControlListeners();    
@@ -68,8 +76,7 @@ export default abstract class Trigger{
             this.frequencyElementInput.value = String(this.frequency);
             this.qSlider.valueAsNumber = this.q;
             this.qElementInput.value = String(this.q);
-
-
+    
             this.filterOptionList.forEach((option) => {
 
                 if(option.value !== this.filterOption){
@@ -100,7 +107,8 @@ export default abstract class Trigger{
         this.qElementInput = document.querySelector('.sampler__q-text');
         this.qSlider = document.querySelector('.sampler__q-slider');
 
-        this.filterOptionList = Array.from(document.querySelectorAll('.sampler__filter-option'))
+        this.filterOptionList = Array.from(document.querySelectorAll('.sampler__filter-option'));
+
     }
 
     initAudioControlListeners(): void{
@@ -282,10 +290,10 @@ export default abstract class Trigger{
             // !!! Safari only supports callback syntax of decodeAudioData
             // const audioBuffer = _this.audioContext.decodeAudioData(fileReader.result as any);
 
-            const audioBuffer = _this.audioContext.decodeAudioData(fileReader.result, function(buffer){
+            const audioBuffer = _this.audioContext.decodeAudioData(fileReader.result, function(buffer: AudioBuffer){
                 return Promise.resolve(buffer);
             }, 
-              function(err){
+              function(err: Error){
                 return Promise.reject(err);
             })
     
@@ -343,6 +351,22 @@ export default abstract class Trigger{
 
     removeActiveState(): void{
         this.triggerElement.classList.remove('highlight')
+    }
+
+    setStartSliderPos(leftPos: number): void{
+        this.startSliderPos = leftPos;
+    }
+
+    setEndSliderPos(leftPos: number): void{
+        this.endSliderPos = leftPos;
+    }
+
+    getStartSliderPos(): number{
+        return this.startSliderPos;
+    }
+
+    getEndSliderPos(): number{
+        return this.endSliderPos;
     }
 
     abstract buildHTML(): void
