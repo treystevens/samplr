@@ -1,15 +1,18 @@
+import Trigger from './Trigger';
+
 export default class Slider{
 
+    private active: boolean
+    private activeTrigger: Trigger
     private endSlider: HTMLElement
-    private offset: number
     private halfSliderWidth: number
-    private startSlider: HTMLElement
-    private active = false;
+    private offset: number
     private sliderDivRect: any
-
-
+    private startSlider: HTMLElement
+    
 
     constructor(){
+        this.active = false;
         this.startSlider = document.querySelector('.slider__handle--start');
         this.endSlider = document.querySelector('.slider__handle--end');
 
@@ -22,8 +25,6 @@ export default class Slider{
         // Get the width of the slider to position start and end slider
         this.halfSliderWidth = this.startSlider.offsetWidth / 2;
 
-    
-      
         this.offset = elemRect.left - bodyRect.left;
 
         this.startSlider.style.left = `${0 - (this.halfSliderWidth)}px`
@@ -38,7 +39,6 @@ export default class Slider{
         sliderDiv.addEventListener("mouseup",(evt) => this.dragEnd(evt), false);
         sliderDiv.addEventListener("mousemove", (evt) =>this.moveSlider(evt), false);
     }
-
 
 
     dragStart(evt: Event) {
@@ -62,6 +62,7 @@ export default class Slider{
                 if (x >= 0 - this.halfSliderWidth && x < parseInt(this.endSlider.style.left)) {
                    const left = evt.clientX - this.offset - 20 + 'px';
                    evt.target.style.left = left;
+                   this.activeTrigger.setStartSliderPos(parseInt(left));
                 }
             }
         
@@ -72,10 +73,27 @@ export default class Slider{
                     if (x > parseInt(this.startSlider.style.left) && x <= this.sliderDivRect.width - this.halfSliderWidth) {
                         const left = evt.clientX - this.offset - 20 + 'px';
                         evt.target.style.left = left;
+                        this.activeTrigger.setEndSliderPos(parseInt(left));
                     }
             }
         }
         
     }
 
+
+    setStartSlider(leftPos: number): void{
+        this.startSlider.style.left = `${leftPos}px` ;
+    }
+
+    setEndSlider(leftPos: number): void{
+        this.endSlider.style.left = `${leftPos}px` ;  
+    }
+
+    // Set the active trigger & set start and end slider from Trigger attributes
+    setActiveTrigger(t: Trigger): void{
+        this.activeTrigger = t;
+        this.active = false;
+        this.setStartSlider(this.activeTrigger.getStartSliderPos())
+        this.setEndSlider(this.activeTrigger.getEndSliderPos());
+    }
 }
