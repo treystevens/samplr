@@ -164,7 +164,15 @@ export default class Sampler{
         fileReader.readAsArrayBuffer(evt.target.files[0]);
         fileReader.onload = function(){
             
-            const audioBuffer = _this.audioContext.decodeAudioData(fileReader.result as any);
+            // !!! Safari only supports callback syntax of decodeAudioData
+            // const audioBuffer = _this.audioContext.decodeAudioData(fileReader.result as any);
+
+            const audioBuffer = _this.audioContext.decodeAudioData(fileReader.result, function(buffer){
+                return Promise.resolve(buffer);
+            }, 
+              function(err){
+                return Promise.reject(err);
+            })
     
             audioBuffer.then((res: AudioBuffer) => {
                 for(let trigger in _this.triggerSet){

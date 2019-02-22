@@ -52,8 +52,25 @@ export default class AudioTasks{
         })
         .then((arrayBuffers: Array<ArrayBuffer>) => {
 
-            const buffer1 = this.audioContext.decodeAudioData(arrayBuffers[0]);
-            const buffer2 = this.audioContext.decodeAudioData(arrayBuffers[1]);
+            // !!! Safari only supports callback syntax of decodeAudioData
+            // const buffer1 = this.audioContext.decodeAudioData(arrayBuffers[0]);
+            // const buffer2 = this.audioContext.decodeAudioData(arrayBuffers[1]);
+
+            // let buffer1;
+            
+            const buffer1 = this.audioContext.decodeAudioData(arrayBuffers[0], function(buffer){
+                return Promise.resolve(buffer);
+            }, 
+              function(err){
+                return Promise.reject(err);
+            })
+            const buffer2 = this.audioContext.decodeAudioData(arrayBuffers[1], function(buffer){
+                return Promise.resolve(buffer);
+            }, 
+              function(err){
+                return Promise.reject(err);
+            })
+            
             
             return Promise.all([buffer1, buffer2]);
         })
