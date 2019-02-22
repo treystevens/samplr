@@ -31,12 +31,13 @@ export default class Sampler{
     constructor(audioContext: AudioContext){
 
         this.audioContext = audioContext;
-        this.slider = new Slider();
         this.initKeys();
         this.initPads();
         this.activeKey = this.triggerSet['a'];
+        this.slider = new Slider();
+        this.initSlidersForTriggers();
         
-        
+
         window.addEventListener('keydown', (evt) => {
             this.captureWindowEvent(evt);        
         });
@@ -51,7 +52,6 @@ export default class Sampler{
             }
         })
     }
-
     
     /**
     * Invoke Trigger's play method if it has an associated key
@@ -201,7 +201,7 @@ export default class Sampler{
             case 'live':
                 load = liveKit;
                 break;
-            case 'african-percussion':
+            case 'african':
                 load = africanKit;
                 break;
             case 'trap':
@@ -218,8 +218,6 @@ export default class Sampler{
             this.triggerSet[padKey].setSampleURL(load[i].url)
             this.triggerSet[padKey].fetchSample();
         }
-
-    
     }
 
     loadKeys(sampleBank: string){
@@ -258,8 +256,12 @@ export default class Sampler{
             this.triggerSet[keyKey].setSampleURL(load[i].url)
             this.triggerSet[keyKey].fetchSample();
         }
+    }
 
-
+    initSlidersForTriggers(){
+        for(let i in this.triggerSet){
+            this.triggerSet[i].initSliders();
+        }
     }
 
     removeModal(): void{
@@ -267,4 +269,3 @@ export default class Sampler{
     }
 
 }
-
