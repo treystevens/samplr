@@ -31,10 +31,10 @@ export default class Sampler{
     constructor(audioContext: AudioContext){
 
         this.audioContext = audioContext;
+        this.slider = new Slider();
         this.initKeys();
         this.initPads();
         this.activeKey = this.triggerSet['a'];
-        this.slider = new Slider();
         
         
         window.addEventListener('keydown', (evt) => {
@@ -85,7 +85,8 @@ export default class Sampler{
             this.triggerSet[evt.key].addActiveState();
             this.activeKey.setActive(false);
             this.activeKey = this.triggerSet[evt.key];
-            this.triggerSet[evt.key].setActive(true)
+            this.slider.setActiveTrigger(this.triggerSet[evt.key]);
+            this.triggerSet[evt.key].setActive(true);
             this.triggerSet[evt.key].play();
             
             return;
@@ -95,7 +96,6 @@ export default class Sampler{
         if(evt.key === 'Shift'){
             document.querySelector('.options__stop').classList.add('highlight');
 
-            if(!(document.querySelector('#waveform').firstChild)) return;
             this.activeKey.stopSound();
         }
     }
