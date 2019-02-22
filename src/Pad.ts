@@ -13,7 +13,7 @@ export default class Pad extends Trigger{
     buildHTML(): void{
         const drumMachine = document.querySelector('.drum-machine');
 
-        const article = document.createElement('article');
+        const totalPadContainer = document.createElement('div');
         const padContainer = document.createElement('div');
         const swapKey = document.createElement('span');
         swapKey.textContent = 'Swap Key'
@@ -48,13 +48,13 @@ export default class Pad extends Trigger{
         this.triggerListener(pad);
         this.swapListener(swapKey);
         
-        article.classList.add('drum-pad');
+        totalPadContainer.classList.add('drum-pad');
         pad.classList.add('drum-pad__pad');
         swapKey.classList.add('drum-pad__swap')
 
-        drumMachine.appendChild(article);
-        article.appendChild(padContainer);
-        article.appendChild(padControls);
+        drumMachine.appendChild(totalPadContainer);
+        totalPadContainer.appendChild(padContainer);
+        totalPadContainer.appendChild(padControls);
         padContainer.appendChild(pad);
         padContainer.appendChild(padOptionsContainer);
         padOptionsContainer.appendChild(loadElements.loadBtnLabel);
