@@ -15,6 +15,7 @@ export default abstract class Trigger{
     protected active: boolean
     protected audioBuffer: AudioBuffer
     protected audioContext: AudioContext
+    protected audioSourceRunning: boolean
     protected audioSource: AudioBufferSourceNode
     protected endSliderPos: number
     protected filterOption: string
@@ -44,6 +45,7 @@ export default abstract class Trigger{
         this.sampler = sampler;
         this.key = key;
         this.audioContext = audioContext;
+        this.audioSourceRunning = false;
         this.pitch = 0;
         this.gain = 0;
         this.q = 0;
@@ -251,6 +253,12 @@ export default abstract class Trigger{
         const [startTime, duration] = this.audioPlayRange();
 
         this.audioSource.start(0, startTime, duration);
+        this.audioSourceRunning = true;
+        const _this = this
+
+        this.audioSource.onended = function() {
+            _this.audioSourceRunning = false;  
+        }
     }
 
     // Converting start and end slider pixels into seconds to get the play range of the audio sample
@@ -269,7 +277,7 @@ export default abstract class Trigger{
     }
 
     stopSound(): void{
-        this.audioSource.stop();
+        if(this.audioSourceRunning) this.audioSource.stop();
     }
 
     setTriggerElementText(): void{
