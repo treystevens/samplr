@@ -55,8 +55,6 @@ export default class AudioTasks{
             // !!! Safari only supports callback syntax of decodeAudioData
             // const buffer1 = this.audioContext.decodeAudioData(arrayBuffers[0]);
             // const buffer2 = this.audioContext.decodeAudioData(arrayBuffers[1]);
-
-            // let buffer1;
             
             const buffer1 = this.audioContext.decodeAudioData(arrayBuffers[0], function(buffer){
                 return Promise.resolve(buffer);
@@ -70,8 +68,7 @@ export default class AudioTasks{
               function(err){
                 return Promise.reject(err);
             })
-            
-            
+
             return Promise.all([buffer1, buffer2]);
         })
         .then((audioBuffers: Array<AudioBuffer>) => {
@@ -150,7 +147,7 @@ export default class AudioTasks{
     private metronomeTimer(): void{
         const bpms = this.beatsPerMillisecond();
         const metronome = setInterval(metronomeCount, bpms);
-        const self = this;
+        const _this = this;
         let count = 1;
         
         this.metronomeBtn.textContent = 'Stop Metronome';
@@ -160,9 +157,9 @@ export default class AudioTasks{
             const metronomeDisplay = document.querySelector('.options__metronome-display');
             
             // Reset metronome on prerecord count and after 4 beats
-            if(count === 5 && self.prerecord){
-                self.prerecord = false;
-                self.startRecording();
+            if(count === 5 && _this.prerecord){
+                _this.prerecord = false;
+                _this.startRecording();
             }
             // Loop metronome count back to 1
             if(count === 5) {
@@ -170,17 +167,17 @@ export default class AudioTasks{
             };
 
             // Stop Metronome
-            if(!self.metronomeRunning){
+            if(!_this.metronomeRunning){
                 metronomeDisplay.textContent = '-';
-                self.metronomeBtn.textContent = 'Start Metronome'
+                _this.metronomeBtn.textContent = 'Start Metronome'
                 clearInterval(metronome);
                 return;
             } 
 
-            self.playMetronome(count);
+            _this.playMetronome(count);
 
             // Append negative value for prerecord count
-            if(self.prerecord) metronomeDisplay.textContent = `-${count}`;
+            if(_this.prerecord) metronomeDisplay.textContent = `-${count}`;
             else { 
                 metronomeDisplay.textContent = `${count}`;
             }
