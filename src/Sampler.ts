@@ -51,8 +51,8 @@ export default class Sampler{
                 this.triggerSet[evt.key].removeActiveState();
                 return;
             }
-            if(document.querySelector('.options__stop').classList.contains('highlight')){
-                document.querySelector('.options__stop').classList.remove('highlight');
+            if(document.querySelector('.audio-tasks__stop').classList.contains('highlight')){
+                document.querySelector('.audio-tasks__stop').classList.remove('highlight');
             }
         })
     }
@@ -96,7 +96,7 @@ export default class Sampler{
 
         // Stop sound when played
         if(evt.key === 'Shift'){
-            document.querySelector('.options__stop').classList.add('highlight');
+            document.querySelector('.audio-tasks__stop').classList.add('highlight');
             this.stopSounds();
         }
     }

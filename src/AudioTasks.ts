@@ -21,9 +21,9 @@ export default class AudioTasks{
         this.audioContext = audioContext;
         this.metronomeAudioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-        this.recordBtn = document.querySelector('.options__record');
-        this.recordingIcon = document.querySelector('.options__record-icon');
-        this.metronomeBtn = document.querySelector('.options__metronome'); 
+        this.recordBtn = document.querySelector('.audio-tasks__record');
+        this.recordingIcon = document.querySelector('.audio-tasks__record-icon');
+        this.metronomeBtn = document.querySelector('.audio-tasks__metronome'); 
 
         this.currentlyRecording = false;
         this.metronomeRunning = false;
@@ -95,10 +95,10 @@ export default class AudioTasks{
             }
             else {
                 // Remove previous recording session
-                if(document.querySelector('.options__recording-audio')){
+                if(document.querySelector('.audio-tasks__recording-audio')){
     
-                    document.querySelector('.options__recording-audio').remove();
-                    document.querySelector('.options__recording-link').remove();
+                    document.querySelector('.audio-tasks__recording-audio').remove();
+                    document.querySelector('.audio-tasks__recording-link').remove();
                 }
                 
                 this.metronomeRunning = false;
@@ -116,8 +116,8 @@ export default class AudioTasks{
     }
 
     private beatsPerMillisecond(): number{
-        const setBPM = document.querySelector('.options__set-bpm');
-        let bpm = Number(setBPM.value);
+        const setBPM: HTMLInputElement = document.querySelector('.audio-tasks__set-bpm');
+        let bpm: number = Number(setBPM.value);
  
         // Validate value of setBPM button 
         if(isNaN(setBPM.value) || setBPM.value === '') {
@@ -154,7 +154,7 @@ export default class AudioTasks{
         
         function metronomeCount(){
 
-            const metronomeDisplay = document.querySelector('.options__metronome-display');
+            const metronomeDisplay = document.querySelector('.audio-tasks__metronome-display');
             
             // Reset metronome on prerecord count and after 4 beats
             if(count === 5 && _this.prerecord){
@@ -203,7 +203,7 @@ export default class AudioTasks{
         const link = window.document.createElement('a');
         const click = document.createEvent("Event");
         const audio = document.createElement('audio');
-        const options = document.querySelector('.options');
+        const audioTasks = document.querySelector('.audio-tasks');
 
         link.href = url;
         link.download = 'sample-recording.ogg';
@@ -214,13 +214,13 @@ export default class AudioTasks{
         
         link.textContent = 'Download Recording (OGG)'
 
-        audio.classList.add('options__recording-audio');
-        link.classList.add('options__recording-link');
+        audio.classList.add('audio-tasks__recording-audio');
+        link.classList.add('audio-tasks__recording-link');
 
         audio.controls = true;
         audio.src = url;
 
-        options.appendChild(audio);
-        options.appendChild(link);
+        audioTasks.appendChild(audio);
+        audioTasks.appendChild(link);
     }
 }

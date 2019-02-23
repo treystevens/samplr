@@ -19,8 +19,8 @@ audioFile.addEventListener('input', (evt) => {
 })
 
 if (window.matchMedia('screen and (max-width: 820px)').matches) {
-  document.querySelector('.load-samples').remove();
-  document.querySelector('.options').remove();
+  // document.querySelector('.load-samples').remove();
+  document.querySelector('.audio-tasks').remove();
 
 
   const message = document.createElement('div');
@@ -49,3 +49,5 @@ document.querySelector('.load-keys').addEventListener('click', (evt) => {
   const sampleBankSelection = document.querySelector('.load-sampler-options').value;
   sampler.loadKeys(sampleBankSelection)
 })
+
+console.log('dude')

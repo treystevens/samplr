@@ -490,25 +490,25 @@ USER OPTIONS
 
 *********************/
 
-.options{
+.audio-tasks{
     display: flex;
     align-items: center;
     flex-direction: column;
     padding: 0 10px;
 }
 
-.options__record-container{
+.audio-tasks__record-container{
     display: flex;
     align-items: center;
     margin-top: 40px;
 }
 
-.options__record{
+.audio-tasks__record{
     margin-left: 5px;
     margin-bottom: initial;
 }
 
-.options__record-icon{
+.audio-tasks__record-icon{
     border: 1px solid #D73501;
     width: 40px;
     height: 40px;
@@ -522,14 +522,14 @@ USER OPTIONS
     background-color: #D73501;
 }
 
-.options__stop-instructions{
+.audio-tasks__stop-instructions{
     text-align: center;
     margin-top: 60px;
     line-height: 1.4rem;
 }
 
 
-.options__stop{
+.audio-tasks__stop{
     padding: 5px 10px;
     border-radius: 10px;
     display: block;
@@ -539,7 +539,7 @@ USER OPTIONS
     margin: 0 auto;
 }
 
-.options__bpm{
+.audio-tasks__bpm{
     display: flex;
     align-items: center;
     justify-content: center;
@@ -548,19 +548,19 @@ USER OPTIONS
 
 
 
-.options__set-bpm{
+.audio-tasks__set-bpm{
     margin-left: 5px;
     width: 35%;
 }
 
-.options__metronome-container{
+.audio-tasks__metronome-container{
     margin-top: 40px;
     display: flex;
     flex-direction: column;
 }
 
 
-.options__metronome-display{
+.audio-tasks__metronome-display{
     display: flex;
     align-items: center;
     justify-content: center;
@@ -573,12 +573,12 @@ USER OPTIONS
     
 }
 
-.options__recording-audio{
+.audio-tasks__recording-audio{
     width: 80%;
     margin: 40px 0 10px 0;
 }
 
-.options__recording-link{
+.audio-tasks__recording-link{
     display: block;
     
 }
