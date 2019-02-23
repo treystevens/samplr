@@ -58,7 +58,7 @@ export default class Pad extends Trigger{
         padContainer.appendChild(pad);
         padContainer.appendChild(padOptionsContainer);
         padOptionsContainer.appendChild(loadElements.loadBtnLabel);
-        padOptionsContainer.appendChild(loadElements.loadBtn);
+        loadElements.loadBtnLabel.appendChild(loadElements.loadBtn);
         padOptionsContainer.appendChild(resetSVG);
     }
 
@@ -67,10 +67,9 @@ export default class Pad extends Trigger{
         const loadBtnLabel = document.createElement('label');
         const loadBtn = document.createElement('input');
 
-        loadBtnLabel.setAttribute('for', 'drum-pad__load--hidden');
         loadBtnLabel.textContent = 'Load';
         loadBtn.type = 'file';
-        loadBtn.id = 'drum-pad__load--hidden';
+        loadBtn.classList.add('drum-pad__load--hidden');
 
         loadBtnLabel.classList.add('drum-pad__load-label')
         this.loadListener(loadBtn);
@@ -84,12 +83,14 @@ export default class Pad extends Trigger{
     loadListener(elem: Element): void{
         elem.addEventListener('input', (evt) => {
             this.decodeBuffer(evt);
+            // we want to se the userloadedAudio blob so that the wavesurfer picks up the new image
         })
     }
 
     resetListener(elem: Element): void{
         elem.addEventListener('click', (evt) => {
             this.fetchSample();
+            // We want to reset the userLoadedAudioBlob to null so that the default sample is used instead for the wave image
         })
     }
     
