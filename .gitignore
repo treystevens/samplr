@@ -1,2 +1,5 @@
-/node_modules
-/public/
+/node_modules/
+/public/scripts/mattWorker.js
+/public/scripts/recorderWorker.js
+/public/scripts/waveworker.js
+/src/Recorder.ts
