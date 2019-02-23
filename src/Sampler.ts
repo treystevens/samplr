@@ -26,11 +26,15 @@ export default class Sampler{
     private refTrigger: Trigger;
     private slider: Slider
     private swapFlag: boolean = false;
+    private triggerBuffer: Array<Trigger>
+    private triggerBufferCount: number
     private triggerSet: any = {};
 
     constructor(audioContext: AudioContext){
 
         this.audioContext = audioContext;
+        this.triggerBuffer = [];
+        this.triggerBufferCount = 0;
         this.initKeys();
         this.initPads();
         this.activeKey = this.triggerSet['a'];
@@ -66,7 +70,6 @@ export default class Sampler{
 
         
         if(this.swapFlag && validPadKeys[evt.key] && isNaN(Number(evt.key))) {
-            
             this.removeModal();
             this.refTrigger.setKey(evt.key);       
             this.refTrigger = null;
@@ -81,23 +84,34 @@ export default class Sampler{
        
         
         if(this.triggerSet[evt.key]) {
-            
             this.triggerSet[evt.key].addActiveState();
             this.activeKey.setActive(false);
             this.activeKey = this.triggerSet[evt.key];
             this.slider.setActiveTrigger(this.triggerSet[evt.key]);
             this.triggerSet[evt.key].setActive(true);
             this.triggerSet[evt.key].play();
-            
+            this.loadTriggerBuffer(this.triggerSet[evt.key])
             return;
         }
 
         // Stop sound when played
         if(evt.key === 'Shift'){
             document.querySelector('.options__stop').classList.add('highlight');
-
-            this.activeKey.stopSound();
+            this.stopSounds();
         }
+    }
+
+    stopSounds(){
+        for(let trigger in this.triggerSet){
+            this.triggerSet[trigger].stopSound();
+        }
+    }
+
+    loadTriggerBuffer(t: Trigger){
+        if(this.triggerBufferCount > 15) this.triggerBufferCount = 0;
+
+        this.triggerBuffer[this.triggerBufferCount] = t;
+        this.triggerBufferCount++
     }
 
     initPads(){
@@ -255,7 +269,6 @@ export default class Sampler{
         }
 
         for(let i = 0; i < load.length; i++){
-
             const keyKey = load[i].key
             this.triggerSet[keyKey].setSampleURL(load[i].url)
             this.triggerSet[keyKey].fetchSample();
