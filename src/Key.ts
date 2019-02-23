@@ -56,7 +56,7 @@ export default class Key extends Trigger{
         }
 
         if (!window.matchMedia('screen and (max-width: 820px)').matches) {
-            keyboardKey.textContent = String(this.getKey().toUpperCase();
+            keyboardKey.textContent = String(this.getKey().toUpperCase());
         }
 
         this.triggerElement = key;
