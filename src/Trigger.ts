@@ -248,22 +248,24 @@ export default abstract class Trigger{
             wavesurfer.load(this.sampleURL);
         }
 
-        const startTime = this.pixelsToSeconds(this.startSliderPos);
-        const endTime = this.pixelsToSeconds(this.endSliderPos);
+        const [startTime, duration] = this.audioPlayRange();
 
-        this.audioSource.start(0, startTime, endTime);
+        this.audioSource.start(0, startTime, duration);
     }
 
-    pixelsToSeconds(sliderPos: number){
+    // Converting start and end slider pixels into seconds to get the play range of the audio sample
+    audioPlayRange(){
         const startSlider = document.querySelector('.slider__handle--start');
         // Sliders have a half width offset, so we want to add this offset back to its position
         const halfSliderWidth = startSlider.offsetWidth / 2;
         const songDuration = this.audioSource.buffer.duration;
         const sliderWidth = document.querySelector('.slider').offsetWidth;
         const pixelsPerSecond = sliderWidth / songDuration;
-        const sliderTime = (sliderPos + halfSliderWidth) / pixelsPerSecond;
+        const startTime = (this.startSliderPos + halfSliderWidth) / pixelsPerSecond;
+        const endTime = (this.endSliderPos + halfSliderWidth) / pixelsPerSecond;
+        const duration = endTime - startTime;
 
-        return sliderTime;
+        return [startTime, duration]
     }
 
     stopSound(): void{
@@ -288,11 +290,11 @@ export default abstract class Trigger{
 
     // Decodes an audio file when loaded
     decodeBuffer(evt: Event): void{
-
+    
         const _this = this;
 
         const fileReader = new FileReader();
-
+        this.setUserLoadedAudioBlob(evt.target.files[0]);
         fileReader.readAsArrayBuffer(evt.target.files[0]);
         fileReader.onload = function(){
             
@@ -317,7 +319,8 @@ export default abstract class Trigger{
     }
 
     fetchSample(): void{
-       
+        this.setUserLoadedAudioBlob(null);
+        
         fetch(this.sampleURL)
         .then(response =>  response.arrayBuffer())
         .then((arrayBuffer) => {
