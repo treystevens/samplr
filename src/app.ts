@@ -1,4 +1,3 @@
-import Recorder from './Recorder';
 import Sampler from './Sampler';
 import AudioTasks from './AudioTasks';
 
