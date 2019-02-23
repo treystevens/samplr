@@ -174,6 +174,10 @@ export default class Sampler{
             })
     
             audioBuffer.then((res: AudioBuffer) => {
+
+                _this.audioBuffer = res;
+                wavesurfer.loadBlob(evt.target.files[0])
+
                 for(let trigger in _this.triggerSet){
                     if(!validPadKeys[trigger]){
                         _this.triggerSet[trigger].setAudioBuffer(res);
