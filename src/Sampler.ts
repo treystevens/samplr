@@ -87,9 +87,8 @@ export default class Sampler{
     * 
     **/
     captureWindowEvent(evt: KeyboardEvent): void{
-
         
-        if(this.swapFlag && validPadKeys[evt.key] && isNaN(Number(evt.key))) {
+        if(this.swapFlag && validPadKeys[(evt.key as any)] && isNaN(Number(evt.key))){
             this.removeModal();
             this.refTrigger.setKey(evt.key);       
             this.refTrigger = null;
@@ -209,7 +208,7 @@ export default class Sampler{
         this.swapFlag ? this.swapFlag = false : this.swapFlag = true;
     }
 
-    decodeBuffer(evt: Event){
+    decodeBuffer(evt: any){
 
         const _this = this;
         const fileReader = new FileReader();
@@ -218,12 +217,12 @@ export default class Sampler{
         fileReader.onload = function(){
             
             // !!! Safari only supports callback syntax of decodeAudioData
-            _this.audioContext.decodeAudioData(fileReader.result, function(buffer: AudioBuffer){
+            _this.audioContext.decodeAudioData((fileReader.result as any), function(buffer: AudioBuffer){
                 _this.audioBuffer = buffer;
                 wavesurfer.loadBlob(evt.target.files[0])
 
                 for(let trigger in _this.triggerSet){
-                    if(!validPadKeys[trigger]){
+                    if(!validPadKeys[(trigger as any)]){
                         _this.triggerSet[trigger].setAudioBuffer(buffer);
                         _this.triggerSet[trigger].setUserLoadedAudioBlob(evt.target.files[0]);
                     }
