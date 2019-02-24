@@ -175,7 +175,7 @@ export default abstract class Trigger{
         this.filterOptionList.forEach((option) => {
             if(option.value === 'lowpass') this.userSelectedFilterOption = option;
 
-            option.addEventListener('input', (evt) => {
+            option.addEventListener('change', (evt) => {
                 if(this.active){
                     this.userSelectedFilterOption.checked = false;
                     this.filterOption = evt.target.value;
