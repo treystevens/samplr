@@ -1,14 +1,6 @@
 import Sampler from './Sampler';
-import { masterStreamNode, scriptNode } from './app';
-
+import { masterStreamNode, scriptNode, wavesurfer } from './app';
 export let mediasource: any
-
-export const wavesurfer: any = WaveSurfer.create({
-    container: '#waveform',
-    waveColor: 'orange',
-    progressColor: 'purple',
-    height: 80
-});
 
 export default abstract class Trigger{
 
@@ -118,7 +110,7 @@ export default abstract class Trigger{
         })
         this.gainElementInput.addEventListener('input', (evt) => {
             if(this.active){
-             const value = Number(evt.target.value)
+             const value: number = Number(evt.target.value)
              
              this.gain = value;
              if(isNaN(value)) this.gain = 0;
@@ -137,7 +129,7 @@ export default abstract class Trigger{
             }
         })
         this.pitchElementInput.addEventListener('input', (evt) => {
-            const value = Number(evt.target.value)
+            const value: number = Number(evt.target.value)
 
             this.pitch = value;
             if(value > 12) this.pitch= 12;
@@ -155,7 +147,7 @@ export default abstract class Trigger{
             }
         })
         this.frequencyElementInput.addEventListener('input', (evt) => {
-            const value = Number(evt.target.value)
+            const value: number = Number(evt.target.value)
 
             this.frequency = value;
             if(value > 20000) this.frequency= 20000;
@@ -171,7 +163,7 @@ export default abstract class Trigger{
             }
         })
         this.qElementInput.addEventListener('input', (evt) => {
-            const value = Number(evt.target.value)
+            const value: number = Number(evt.target.value)
 
             this.q = value;
             if(value > 16) this.q = 16;
@@ -203,7 +195,7 @@ export default abstract class Trigger{
 
     setKey(key: string): void{
 
-        const prevKey = this.key;
+        const prevKey: string = this.key;
         this.key = key;
         this.sampler.setTrigger(this, prevKey);
         this.setTriggerElementText();
@@ -215,9 +207,9 @@ export default abstract class Trigger{
 
     establishAudioSource(): void{
 
-        const gainNode = this.audioContext.createGain();
-        const gainLevel = Math.pow(10, this.gain / 20);
-        const biquadFilter = this.audioContext.createBiquadFilter();
+        const gainNode: GainNode = this.audioContext.createGain();
+        const gainLevel: number = Math.pow(10, this.gain / 20);
+        const biquadFilter: BiquadFilterNode = this.audioContext.createBiquadFilter();
         
         this.audioSource = this.audioContext.createBufferSource();
         this.audioSource.buffer = this.audioBuffer;
@@ -249,12 +241,18 @@ export default abstract class Trigger{
         else{
             wavesurfer.load(this.sampleURL);
         }
+        
+        // Only get play range if the view has sliders
+        if(document.querySelector('.slider')){
+            const [startTime, duration]: Array<number> = this.audioPlayRange();
+            this.audioSource.start(0, startTime, duration);
+        }
+        else{
+            this.audioSource.start();
+        }
 
-        const [startTime, duration] = this.audioPlayRange();
-
-        this.audioSource.start(0, startTime, duration);
         this.audioSourceRunning = true;
-        const _this = this
+        const _this: Trigger = this
 
         this.audioSource.onended = function() {
             _this.audioSourceRunning = false;  
@@ -263,15 +261,15 @@ export default abstract class Trigger{
 
     // Converting start and end slider pixels into seconds to get the play range of the audio sample
     audioPlayRange(){
-        const startSlider = document.querySelector('.slider__handle--start');
+        const startSlider: HTMLElement = document.querySelector('.slider__handle--start');
         // Sliders have a half width offset, so we want to add this offset back to its position
-        const halfSliderWidth = startSlider.offsetWidth / 2;
-        const songDuration = this.audioSource.buffer.duration;
-        const sliderWidth = document.querySelector('.slider').offsetWidth;
-        const pixelsPerSecond = sliderWidth / songDuration;
-        const startTime = (this.startSliderPos + halfSliderWidth) / pixelsPerSecond;
-        const endTime = (this.endSliderPos + halfSliderWidth) / pixelsPerSecond;
-        const duration = endTime - startTime;
+        const halfSliderWidth: number = startSlider.offsetWidth / 2;
+        const songDuration: number = this.audioSource.buffer.duration;
+        const sliderWidth: number = document.querySelector('.slider').offsetWidth;
+        const pixelsPerSecond: number = sliderWidth / songDuration;
+        const startTime: number = (this.startSliderPos + halfSliderWidth) / pixelsPerSecond;
+        const endTime: number = (this.endSliderPos + halfSliderWidth) / pixelsPerSecond;
+        const duration: number = endTime - startTime;
 
         return [startTime, duration]
     }
@@ -282,7 +280,7 @@ export default abstract class Trigger{
 
     setTriggerElementText(): void{
         
-        const asciiCode = this.key.charCodeAt(0)
+        const asciiCode: number = this.key.charCodeAt(0)
         
         if(asciiCode >= 97 && asciiCode <= 122){
             this.triggerElement.textContent = String.fromCharCode(asciiCode - 32);
@@ -299,28 +297,18 @@ export default abstract class Trigger{
     // Decodes an audio file when loaded
     decodeBuffer(evt: Event): void{
     
-        const _this = this;
-
-        const fileReader = new FileReader();
+        const _this: Trigger = this;
+        const fileReader: FileReader = new FileReader();
         this.setUserLoadedAudioBlob(evt.target.files[0]);
         fileReader.readAsArrayBuffer(evt.target.files[0]);
         fileReader.onload = function(){
             
             // !!! Safari only supports callback syntax of decodeAudioData
-            // const audioBuffer = _this.audioContext.decodeAudioData(fileReader.result as any);
-
-            const audioBuffer = _this.audioContext.decodeAudioData(fileReader.result, function(buffer: AudioBuffer){
-                return Promise.resolve(buffer);
+            _this.audioContext.decodeAudioData(fileReader.result, function(buffer: AudioBuffer){
+                _this.setAudioBuffer(buffer);
+                _this.establishAudioSource();
             }, 
               function(err: Error){
-                return Promise.reject(err);
-            })
-    
-            audioBuffer.then((res: AudioBuffer) => {
-                _this.setAudioBuffer(res);
-                _this.establishAudioSource();
-            })
-            .catch((err: Error) => {
                 console.log(err);
             })
         }
@@ -332,23 +320,18 @@ export default abstract class Trigger{
         fetch(this.sampleURL)
         .then(response =>  response.arrayBuffer())
         .then((arrayBuffer) => {
-
+            
             // !!! Safari only supports callback syntax of decodeAudioData
-            // this.audioContext.decodeAudioData(arrayBuffer)
-
-            const audioBuffer = this.audioContext.decodeAudioData(arrayBuffer, function(buffer){
-                return Promise.resolve(buffer);
+            const _this = this;
+            this.audioContext.decodeAudioData(arrayBuffer, function(buffer){
+            
+                _this.setAudioBuffer(buffer);
+                _this.establishAudioSource();
             }, 
-              function(err){
+              function(err: Error){
                 return Promise.reject(err);
             })
 
-            return audioBuffer
-
-        })
-        .then((audioBuffer) => {
-            this.setAudioBuffer(audioBuffer);
-            this.establishAudioSource();
         })
         .catch((err: Error) => {
             console.log(err);
@@ -359,12 +342,7 @@ export default abstract class Trigger{
         this.sampleURL = url;
     }
 
-    triggerListener(elem: any): void{
-        elem.addEventListener('click', () => {
-            this.play();
-        })
-    }
-
+  
     addActiveState(): void{
         this.triggerElement.classList.add('highlight')
     }
