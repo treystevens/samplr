@@ -18,7 +18,7 @@ export default class Pad extends Trigger{
         const swapKey: HTMLElement = document.createElement('span');
         const pad: HTMLElement = document.createElement('div');
         const resetSVG: HTMLElement = document.createElement('div');
-        const loadElements: HTMLElement = this.buildLoadElements();
+        const loadElements: any = this.buildLoadElements();
         const padControls: HTMLElement = document.createElement('div');
         const padOptionsContainer: HTMLElement = document.createElement('div');
 
