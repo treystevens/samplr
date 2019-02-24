@@ -118,7 +118,7 @@ export default class AudioTasks{
         let bpm: number = Number(setBPM.value);
  
         // Validate value of setBPM button 
-        if(isNaN(setBPM.value) || setBPM.value === '') {
+        if(isNaN(bpm) || setBPM.value === '') {
             bpm = 120;
             setBPM.value = `${bpm}`;
         }

@@ -6,9 +6,9 @@ export const iOS: boolean = !!(UA.match(/iPad|iPhone/i));
 const audioContext: AudioContext =  new (window.AudioContext || window.webkitAudioContext)();
 const sampler: Sampler = new Sampler(audioContext);
 new AudioTasks(audioContext);
-const audioFile = document.querySelector('.audio-file');
+const audioFile: HTMLInputElement = document.querySelector('.audio-file');
 export let masterStreamNode: any = audioContext.createMediaStreamDestination();
-export const scriptNode = audioContext.createScriptProcessor(4096, 1, 1);
+export const scriptNode: any = audioContext.createScriptProcessor(4096, 1, 1);
 export const wavesurfer: any = WaveSurfer.create({
   container: '#waveform',
   waveColor: 'orange',
@@ -19,7 +19,7 @@ export const wavesurfer: any = WaveSurfer.create({
 
 
 // User loaded file into sampler
-audioFile.addEventListener('change', (evt) => {
+audioFile.addEventListener('change', (evt: Event) => {
   sampler.decodeBuffer(evt)
 })
 
@@ -53,13 +53,13 @@ if (window.matchMedia('screen and (max-width: 820px)').matches) {
 
 // Load key with selected sample bank
 document.querySelector('.load-keys').addEventListener('click', (evt) => {
-  const sampleBankSelection = document.querySelector('.load-sampler-options').value;
+  const sampleBankSelection: string = (document.querySelector('.load-sampler-options') as HTMLSelectElement).value;
   sampler.loadKeys(sampleBankSelection)
 })
 
 // Load drum machine pad with selected kit
 document.querySelector('.load-pads').addEventListener('click', (evt) => {
-  const padSelection = document.querySelector('.load-drum-machine-options').value;
+  const padSelection: string = (document.querySelector('.load-drum-machine-options') as HTMLSelectElement).value;
   sampler.loadPads(padSelection)
 })
 
