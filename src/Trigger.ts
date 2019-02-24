@@ -29,7 +29,7 @@ export default abstract class Trigger{
     protected sampleURL: string
     protected startSliderPos: number
     protected triggerElement: HTMLElement
-    protected userSelectedFilterOption: HTMLElement
+    protected userSelectedFilterOption: HTMLInputElement
     protected userLoadedAudioBlob: Blob
     
 
@@ -102,13 +102,13 @@ export default abstract class Trigger{
 
     initAudioControlListeners(): void{
         // Gain Input Listeners
-        this.gainSlider.addEventListener('input', (evt) => {
+        this.gainSlider.addEventListener('input', (evt: any) => {
             if(this.active){
                 this.gain = evt.target.value;
                 this.gainElementInput.value = String(this.gain);
             }
         })
-        this.gainElementInput.addEventListener('input', (evt) => {
+        this.gainElementInput.addEventListener('input', (evt: any) => {
             if(this.active){
              const value: number = Number(evt.target.value)
              
@@ -122,13 +122,13 @@ export default abstract class Trigger{
         })
 
         // Pitch Input Listeners
-        this.pitchSlider.addEventListener('input', (evt) => {
+        this.pitchSlider.addEventListener('input', (evt: any) => {
             if(this.active){
                 this.pitch = evt.target.value;
                 this.pitchElementInput.value = String(this.pitch);
             }
         })
-        this.pitchElementInput.addEventListener('input', (evt) => {
+        this.pitchElementInput.addEventListener('input', (evt: any) => {
             const value: number = Number(evt.target.value)
 
             this.pitch = value;
@@ -140,13 +140,13 @@ export default abstract class Trigger{
         })
 
         // Filter Input Listeners
-        this.frequencySlider.addEventListener('input', (evt) => {
+        this.frequencySlider.addEventListener('input', (evt: any) => {
             if(this.active){
                 this.frequency = evt.target.value;
                 this.frequencyElementInput.value = String(this.frequency);
             }
         })
-        this.frequencyElementInput.addEventListener('input', (evt) => {
+        this.frequencyElementInput.addEventListener('input', (evt: any) => {
             const value: number = Number(evt.target.value)
 
             this.frequency = value;
@@ -156,13 +156,13 @@ export default abstract class Trigger{
             this.frequencySlider.valueAsNumber = this.frequency;
             
         })
-        this.qSlider.addEventListener('input', (evt) => {
+        this.qSlider.addEventListener('input', (evt: any) => {
             if(this.active){
                 this.q = evt.target.value;
                 this.qElementInput.value = String(this.q);
             }
         })
-        this.qElementInput.addEventListener('input', (evt) => {
+        this.qElementInput.addEventListener('input', (evt: any) => {
             const value: number = Number(evt.target.value)
 
             this.q = value;
@@ -175,7 +175,7 @@ export default abstract class Trigger{
         this.filterOptionList.forEach((option) => {
             if(option.value === 'lowpass') this.userSelectedFilterOption = option;
 
-            option.addEventListener('change', (evt) => {
+            option.addEventListener('change', (evt: any) => {
                 if(this.active){
                     this.userSelectedFilterOption.checked = false;
                     this.filterOption = evt.target.value;
@@ -215,7 +215,7 @@ export default abstract class Trigger{
         this.audioSource.buffer = this.audioBuffer;
 
         gainNode.gain.value = gainLevel;
-        biquadFilter.type = this.filterOption;
+        (biquadFilter.type as string) = this.filterOption;
         biquadFilter.frequency.value = this.frequency;
         biquadFilter.Q.value = this.q;
 
@@ -265,7 +265,7 @@ export default abstract class Trigger{
         // Sliders have a half width offset, so we want to add this offset back to its position
         const halfSliderWidth: number = startSlider.offsetWidth / 2;
         const songDuration: number = this.audioSource.buffer.duration;
-        const sliderWidth: number = document.querySelector('.slider').offsetWidth;
+        const sliderWidth: number = (document.querySelector('.slider') as HTMLElement).offsetWidth;
         const pixelsPerSecond: number = sliderWidth / songDuration;
         const startTime: number = (this.startSliderPos + halfSliderWidth) / pixelsPerSecond;
         const endTime: number = (this.endSliderPos + halfSliderWidth) / pixelsPerSecond;
@@ -295,7 +295,7 @@ export default abstract class Trigger{
     }
 
     // Decodes an audio file when loaded
-    decodeBuffer(evt: Event): void{
+    decodeBuffer(evt: any): void{
     
         const _this: Trigger = this;
         const fileReader: FileReader = new FileReader();
@@ -304,7 +304,7 @@ export default abstract class Trigger{
         fileReader.onload = function(){
             
             // !!! Safari only supports callback syntax of decodeAudioData
-            _this.audioContext.decodeAudioData(fileReader.result, function(buffer: AudioBuffer){
+            _this.audioContext.decodeAudioData((fileReader.result as any), function(buffer: AudioBuffer){
                 _this.setAudioBuffer(buffer);
                 _this.establishAudioSource();
             }, 
@@ -369,8 +369,8 @@ export default abstract class Trigger{
 
 
     initSliders(){
-        this.startSliderPos = parseInt(document.querySelector('.slider__handle--start').style.left)
-        this.endSliderPos = parseInt(document.querySelector('.slider__handle--end').style.left)
+        this.startSliderPos = parseInt((document.querySelector('.slider__handle--start') as HTMLElement).style.left)
+        this.endSliderPos = parseInt((document.querySelector('.slider__handle--end') as HTMLElement).style.left)
     }
     abstract buildHTML(): void
 }
