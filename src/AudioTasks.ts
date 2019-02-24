@@ -33,49 +33,41 @@ export default class AudioTasks{
         this.recordBtn.addEventListener('click', () => this.toggleRecording());
         this.metronomeBtn.addEventListener('click', () => this.toggleMetronome());
 
-        this.fetchMetronomeSamples()
+        this.fetchMetronomeSamples();
     }
 
     // Fetches Metronome sounds & stores them into their appropriate buffer
     private fetchMetronomeSamples(): void{
 
-        const metronome = fetch('https://res.cloudinary.com/dr4eajzak/video/upload/v1550624008/Metronome.wav');
-        const metronomeUp = fetch('https://res.cloudinary.com/dr4eajzak/video/upload/v1550624008/MetronomeUp.wav');
+        const metronome: any = fetch('https://res.cloudinary.com/dr4eajzak/video/upload/v1550624008/Metronome.wav');
+        const metronomeUp: any = fetch('https://res.cloudinary.com/dr4eajzak/video/upload/v1550624008/MetronomeUp.wav');
 
 
         Promise.all([metronome, metronomeUp])
         .then((response: any) => {
-            const res1 = response[0].arrayBuffer();
-            const res2 = response[1].arrayBuffer();
+            const res1: ArrayBuffer = response[0].arrayBuffer();
+            const res2: ArrayBuffer = response[1].arrayBuffer();
 
             return Promise.all([res1, res2]);
         })
         .then((arrayBuffers: Array<ArrayBuffer>) => {
 
-            // !!! Safari only supports callback syntax of decodeAudioData
-            // const buffer1 = this.audioContext.decodeAudioData(arrayBuffers[0]);
-            // const buffer2 = this.audioContext.decodeAudioData(arrayBuffers[1]);
-            
-            const buffer1 = this.audioContext.decodeAudioData(arrayBuffers[0], function(buffer){
-                return Promise.resolve(buffer);
+            // !!! Safari only supports callback syntax of decodeAudioData    
+            const _this = this;        
+            this.audioContext.decodeAudioData(arrayBuffers[0], function(buffer){
+                _this.metronomeAudioBuffer = buffer;
             }, 
-              function(err){
-                return Promise.reject(err);
+              function(err: Error){
+                console.log(err);
             })
-            const buffer2 = this.audioContext.decodeAudioData(arrayBuffers[1], function(buffer){
-                return Promise.resolve(buffer);
+            this.audioContext.decodeAudioData(arrayBuffers[1], function(buffer){
+                _this.metronomeUpAudioBuffer = buffer;
             }, 
-              function(err){
-                return Promise.reject(err);
-            })
-
-            return Promise.all([buffer1, buffer2]);
+              function(err: Error){
+                console.log(err);
+            })            
         })
-        .then((audioBuffers: Array<AudioBuffer>) => {
-            this.metronomeAudioBuffer = audioBuffers[0];
-            this.metronomeUpAudioBuffer = audioBuffers[1];
-        })
-        .catch((err) => {
+        .catch((err: Error) => {
             console.log(err);
         })      
     }
@@ -125,14 +117,14 @@ export default class AudioTasks{
             setBPM.value = `${bpm}`;
         }
 
-        const msPerMinute = 60000;
-        const bpms = msPerMinute / bpm;
+        const msPerMinute: number = 60000;
+        const bpms: number = msPerMinute / bpm;
       
         return bpms;
     }
       
     private startRecording(): void{
-         const options = {
+         const options: any = {
             audioBitsPerSecond : this.audioContext.sampleRate,
             mimeType : 'audio/webm\;codecs=opus'
         }
@@ -145,16 +137,16 @@ export default class AudioTasks{
     }
       
     private metronomeTimer(): void{
-        const bpms = this.beatsPerMillisecond();
-        const metronome = setInterval(metronomeCount, bpms);
+        const bpms: number = this.beatsPerMillisecond();
+        const metronome: number = setInterval(metronomeCount, bpms);
         const _this = this;
-        let count = 1;
+        let count: number = 1;
         
         this.metronomeBtn.textContent = 'Stop Metronome';
         
         function metronomeCount(){
 
-            const metronomeDisplay = document.querySelector('.audio-tasks__metronome-display');
+            const metronomeDisplay: HTMLElement = document.querySelector('.audio-tasks__metronome-display');
             
             // Reset metronome on prerecord count and after 4 beats
             if(count === 5 && _this.prerecord){
@@ -199,20 +191,20 @@ export default class AudioTasks{
     }
 
     private createRecordedAudio(evt: any): void{
-        const url = (window.URL || window.webkitURL).createObjectURL(evt.data);
-        const link = window.document.createElement('a');
-        const click = document.createEvent("Event");
-        const audio = document.createElement('audio');
-        const audioTasks = document.querySelector('.audio-tasks');
+        const url: string = (window.URL || window.webkitURL).createObjectURL(evt.data);
+        const link: HTMLAnchorElement = window.document.createElement('a');
+        const click: Event = document.createEvent("Event");
+        const audio: HTMLAudioElement = document.createElement('audio');
+        const audioTasks: HTMLElement = document.querySelector('.audio-tasks');
 
         link.href = url;
-        link.download = 'sample-recording.ogg';
+        link.download = 'recording.ogg';
         
         // !!! Deprecated - Use Alternative
         click.initEvent("click", true, true);
         link.dispatchEvent(click);  
         
-        link.textContent = 'Download Recording (OGG)'
+        link.textContent = 'Download Recording (.OGG)'
 
         audio.classList.add('audio-tasks__recording-audio');
         link.classList.add('audio-tasks__recording-link');
