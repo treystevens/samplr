@@ -64,7 +64,6 @@ main{
     color: #767676;
     padding-top: 10px;
     display: flex;
-    /* margin: 0 auto; */
 }
 
 .audio-file{
@@ -113,19 +112,24 @@ main{
     left: 0;
     right: 0;
     background-color: white;
-    padding: 10px 40px 10px 10px;
+    padding: 20px 40px 20px 10px;
     line-height: 1.2rem;
     z-index: 4;
-    border: 1px solid #FA6F3C;
+    border: 2px solid #FA6F3C;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 }
 
 .viewing-message-close{
-    position: absolute;
-    right: 25px;
-    top: 25px;
     font-size: 1.6rem;
     padding: 5px;
-    
+    width: 30px;
+    height: 30px;
+}
+
+.viewing-message-info{
+    width: 85%
 }
 
 .btn{
@@ -191,6 +195,8 @@ DRUM MACHINE
 .drum-pad__pad-container{
     width: 80px;
     margin: 0 auto;
+    cursor: pointer;
+    /* pointer-events: none; */
 }
 
 .drum-pad__pad{
@@ -206,6 +212,7 @@ DRUM MACHINE
     color: #FF7F50;
     font-weight: 700;
     font-size: 1.2rem;
+    
 }
 
 .drum-pad__pad:hover{
@@ -252,7 +259,6 @@ DRUM MACHINE
 }
 
 .drum-pad__load--hidden{
-    width: 0;
     display:none;
     visibility: 'hidden';
 }
@@ -617,6 +623,29 @@ USER OPTIONS
 }
 
 @media only screen and (max-width: 768px) {
+
+
+    main{
+        flex-direction: column;
+    }
+    
+    .load-samples{
+        margin: 40px 0;
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-around;
+    }
+
+    .load-sampler--flex{
+        margin: initial;
+        width: 40%;
+    }
+
+    .load-drum-machine--flex{
+        margin: initial;
+        width: 40%;
+    }
+
     .user{
         display: block;
         width: 100%;
@@ -649,6 +678,15 @@ USER OPTIONS
 
     .sampler__filter-input-flex--freq,
     .sampler__filter-input-flex--q{
+        width: 100%;
+    }
+
+    .key__black,
+    .key__white{
+        width: initial
+    }
+    
+    .key{
         width: 100%;
     }
 }
