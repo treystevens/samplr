@@ -14,8 +14,7 @@ enum musicNote{
     h = 'A',
     u = 'A#',
     j = 'B',
-    k = 'C',
-
+    k = 'C'
 }
 
 export default class Key extends Trigger{ 
@@ -28,12 +27,11 @@ export default class Key extends Trigger{
     }
   
     buildHTML(){
-       
-        const keysContainer = document.querySelector('.keys-container');
-        const key = document.createElement('div');  
-        const keyboardKey = document.createElement('span');
-        const musicKey = document.createElement('span');      
-        let keyClass;
+        const keysContainer: HTMLElement = document.querySelector('.keys-container');
+        const key: HTMLElement = document.createElement('div');  
+        const keyboardKey: HTMLElement = document.createElement('span');
+        const musicKey: HTMLElement = document.createElement('span');      
+        let keyClass: string;
         switch (this.key) {
             case 'w':
                 keyClass = 'key__black';
@@ -55,18 +53,18 @@ export default class Key extends Trigger{
                 break;
         }
 
+        // Show Keyboard key associated with key if not mobile (catch-all)
         if (!window.matchMedia('screen and (max-width: 820px)').matches) {
             keyboardKey.textContent = String(this.getKey().toUpperCase());
         }
 
         this.triggerElement = key;
-
-        this.triggerListener(key);
-        
+        key.setAttribute('data-key', this.key);
         musicKey.textContent = musicNote[this.getKey()];
 
         key.classList.add(keyClass);
         key.classList.add('key')
+        key.classList.add('trigger')
         keyboardKey.classList.add('key__keyboard-note')
         musicKey.classList.add('key__music-note')
 
