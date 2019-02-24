@@ -9,6 +9,13 @@ new AudioTasks(audioContext);
 const audioFile = document.querySelector('.audio-file');
 export let masterStreamNode: any = audioContext.createMediaStreamDestination();
 export const scriptNode = audioContext.createScriptProcessor(4096, 1, 1);
+export const wavesurfer: any = WaveSurfer.create({
+  container: '#waveform',
+  waveColor: 'orange',
+  progressColor: 'purple',
+  height: 80,
+  audioContext: audioContext
+});
 
 
 // User loaded file into sampler
