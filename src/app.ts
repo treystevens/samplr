@@ -12,7 +12,7 @@ export const scriptNode = audioContext.createScriptProcessor(4096, 1, 1);
 
 
 // User loaded file into sampler
-audioFile.addEventListener('input', (evt) => {
+audioFile.addEventListener('change', (evt) => {
   sampler.decodeBuffer(evt)
 })
 
@@ -24,7 +24,7 @@ if (window.matchMedia('screen and (max-width: 820px)').matches) {
   const fixedMessageContainer = document.createElement('div');
 
   const message = document.createElement('p');
-  message.textContent = 'To use all of the features and for a better experience, please consider using a computer with a keyboard.';
+  message.textContent = 'To use all of the features of this website and for a better experience, use a computer with a keyboard.';
   fixedMessageContainer.classList.add('viewing-message');
 
   message.classList.add('viewing-message-info')
