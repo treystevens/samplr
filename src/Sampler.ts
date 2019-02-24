@@ -4,7 +4,7 @@ import Pad from './Pad';
 import Key from './Key';
 import { hiphopKit, trapKit, houseKit, liveKit, africanKit } from './samples/drumKitSamples';
 import { electricPiano, grandPiano, guitar, bass, moogBass, organ, horns } from './samples/samplerSamples';
-import { wavesurfer } from './Trigger';
+import { iOS, wavesurfer } from './app';
 import Slider from './Slider'
 
 enum validPadKeys{
@@ -40,8 +40,8 @@ export default class Sampler{
         this.activeKey = this.triggerSet['a'];
         this.slider = new Slider();
         this.initSlidersForTriggers();
-        
 
+        
         window.addEventListener('keydown', (evt) => {
             this.captureWindowEvent(evt);        
         });
@@ -55,8 +55,28 @@ export default class Sampler{
                 document.querySelector('.audio-tasks__stop').classList.remove('highlight');
             }
         })
+        
+
+        if(iOS) {
+            window.addEventListener('touchstart', (evt: any) => {
+                if(evt.target.classList.contains('trigger')){
+                    this.tapSound(evt);
+                }
+            }, false);
+        }
+        else {
+            window.addEventListener('click', (evt: any) => {
+                if(evt.target.classList.contains('trigger')){
+                    this.tapSound(evt);
+                }
+            }, false)
+        }
     }
     
+    setActiveKey(t: Trigger){
+        this.activeKey = t;
+    }
+
     /**
     * Invoke Trigger's play method if it has an associated key
     *
@@ -81,16 +101,15 @@ export default class Sampler{
             this.removeModal();
             return;
         }
-       
-        
         if(this.triggerSet[evt.key]) {
-            this.triggerSet[evt.key].addActiveState();
+            const tappedTrigger = this.triggerSet[evt.key]
+            tappedTrigger.addActiveState();
             this.activeKey.setActive(false);
-            this.activeKey = this.triggerSet[evt.key];
-            this.slider.setActiveTrigger(this.triggerSet[evt.key]);
-            this.triggerSet[evt.key].setActive(true);
-            this.triggerSet[evt.key].play();
-            this.loadTriggerBuffer(this.triggerSet[evt.key])
+            this.activeKey = tappedTrigger;
+            this.slider.setActiveTrigger(tappedTrigger);
+            tappedTrigger.setActive(true);
+            tappedTrigger.play();
+            this.loadTriggerBuffer(tappedTrigger)
             return;
         }
 
@@ -100,6 +119,19 @@ export default class Sampler{
             this.stopSounds();
         }
     }
+
+    tapSound(evt: any){
+
+            const key = evt.target.dataset.key;
+            const tappedTrigger = this.triggerSet[key];
+            this.activeKey.setActive(false);
+            this.activeKey = tappedTrigger;
+            this.slider.setActiveTrigger(tappedTrigger);
+            tappedTrigger.setActive(true);
+            tappedTrigger.play();
+            this.loadTriggerBuffer(tappedTrigger)
+    }
+
 
     stopSounds(){
         for(let trigger in this.triggerSet){
@@ -139,15 +171,24 @@ export default class Sampler{
     **/
     setTrigger(trigger: Trigger, prevKey: string):void{
         
-        delete this.triggerSet[prevKey];
+        delete this.triggerSet[prevKey]
 
         if (this.triggerSet[trigger.getKey()]){
 
-            const occupyingTrigger: Trigger = this.triggerSet[trigger.getKey()];
-            occupyingTrigger.setKey(prevKey);
-            
+            // Get the Trigger that has the key we want to swap to and swap its key to prevKey
+            const swapKeyToTrigger: Trigger = this.triggerSet[trigger.getKey()];
+            swapKeyToTrigger.setKey(prevKey);
+                
+            // Set triggerSet to point correctly to swapped keys
             this.triggerSet[trigger.getKey()] = trigger;
-            this.triggerSet[occupyingTrigger.getKey()] = occupyingTrigger;
+            this.triggerSet[swapKeyToTrigger.getKey()] = swapKeyToTrigger;
+
+            // Swap data attributes on Trigger elements
+            const swapKeyFromTriggerElement = document.querySelector(`[data-key=${prevKey}]`)
+            const swapKeyToTriggerElement = document.querySelector(`[data-key=${trigger.getKey()}]`)
+            
+            swapKeyFromTriggerElement.setAttribute('data-key', `${prevKey}`)
+            swapKeyToTriggerElement.setAttribute('data-key', `${trigger.getKey()}`)
         }
         else{
             this.triggerSet[trigger.getKey()] = trigger;
@@ -171,35 +212,24 @@ export default class Sampler{
     decodeBuffer(evt: Event){
 
         const _this = this;
-
         const fileReader = new FileReader();
 
         fileReader.readAsArrayBuffer(evt.target.files[0]);
         fileReader.onload = function(){
             
             // !!! Safari only supports callback syntax of decodeAudioData
-            // const audioBuffer = _this.audioContext.decodeAudioData(fileReader.result as any);
-
-            const audioBuffer = _this.audioContext.decodeAudioData(fileReader.result, function(buffer){
-                return Promise.resolve(buffer);
-            }, 
-              function(err){
-                return Promise.reject(err);
-            })
-    
-            audioBuffer.then((res: AudioBuffer) => {
-
-                _this.audioBuffer = res;
+            _this.audioContext.decodeAudioData(fileReader.result, function(buffer: AudioBuffer){
+                _this.audioBuffer = buffer;
                 wavesurfer.loadBlob(evt.target.files[0])
 
                 for(let trigger in _this.triggerSet){
                     if(!validPadKeys[trigger]){
-                        _this.triggerSet[trigger].setAudioBuffer(res);
+                        _this.triggerSet[trigger].setAudioBuffer(buffer);
                         _this.triggerSet[trigger].setUserLoadedAudioBlob(evt.target.files[0]);
                     }
-                }                
-            })
-            .catch((err: Error) => {
+                }           
+            }, 
+              function(err: Error){
                 console.log(err);
             })
         }
@@ -231,7 +261,6 @@ export default class Sampler{
         }
 
         for(let i = 0; i < load.length; i++){
-
             const padKey = load[i].key
             this.triggerSet[padKey].setSampleURL(load[i].url)
             this.triggerSet[padKey].fetchSample();
