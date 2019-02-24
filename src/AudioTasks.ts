@@ -34,6 +34,12 @@ export default class AudioTasks{
         this.metronomeBtn.addEventListener('click', () => this.toggleMetronome());
 
         this.fetchMetronomeSamples();
+
+        
+        if(!window.MediaRecorder && !window.matchMedia('screen and (max-width: 820px)').matches){
+            alert('Recording is not supported in this browser. Please consider using Google Chrome or Firefox if you would like to record and download what you make.');
+            document.querySelector('.audio-tasks__record-container').remove();
+        }
     }
 
     // Fetches Metronome sounds & stores them into their appropriate buffer
