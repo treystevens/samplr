@@ -32,11 +32,11 @@ export default class Slider{
 
 
         sliderDiv.addEventListener("touchstart", (evt) => this.dragStart(evt), false);
-        sliderDiv.addEventListener("touchend", (evt) => this.dragEnd(evt), false);
+        sliderDiv.addEventListener("touchend", () => this.dragEnd(), false);
         sliderDiv.addEventListener("touchmove", (evt) =>this.moveSlider(evt), false);
 
         sliderDiv.addEventListener("mousedown", (evt) => this.dragStart(evt), false);
-        sliderDiv.addEventListener("mouseup",(evt) => this.dragEnd(evt), false);
+        sliderDiv.addEventListener("mouseup",() => this.dragEnd(), false);
         sliderDiv.addEventListener("mousemove", (evt) =>this.moveSlider(evt), false);
     }
 
@@ -47,7 +47,7 @@ export default class Slider{
         }
     }
     
-    dragEnd(evt: Event) {
+    dragEnd() {
         this.active = false;
     }
     
