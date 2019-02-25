@@ -60,7 +60,7 @@ export default class Key extends Trigger{
 
         this.triggerElement = key;
         key.setAttribute('data-key', this.key);
-        musicKey.textContent = musicNote[this.getKey()];
+        musicKey.textContent = musicNote[(this.getKey() as any)];
 
         key.classList.add(keyClass);
         key.classList.add('key')
