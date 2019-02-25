@@ -1,6 +1,5 @@
 import Sampler from './Sampler';
-import { masterStreamNode, scriptNode, wavesurfer } from './app';
-export let mediasource: any
+import { wavesurfer, audioTasks } from './app';
 
 export default abstract class Trigger{
 
@@ -230,7 +229,7 @@ export default abstract class Trigger{
         this.audioSource.connect(gainNode);
         gainNode.connect(biquadFilter);
         biquadFilter.connect(this.audioContext.destination)
-        biquadFilter.connect(masterStreamNode);
+        biquadFilter.connect(audioTasks.masterStreamNode);
     }
 
     play(): void{
