@@ -1,18 +1,18 @@
 import Sampler from './Sampler';
 import AudioTasks from './AudioTasks';
+import * as WaveSurfer from 'wavesurfer.js';
+
 
 const UA: string = navigator.userAgent
 export const iOS: boolean = !!(UA.match(/iPad|iPhone/i));
 const audioContext: AudioContext =  new (window.AudioContext || window.webkitAudioContext)();
 const sampler: Sampler = new Sampler(audioContext);
-new AudioTasks(audioContext);
+export const audioTasks: AudioTasks = new AudioTasks(audioContext);
 const audioFile: HTMLInputElement = document.querySelector('.audio-file');
-export let masterStreamNode: any = audioContext.createMediaStreamDestination();
-export const scriptNode: any = audioContext.createScriptProcessor(4096, 1, 1);
 export const wavesurfer: any = WaveSurfer.create({
   container: '#waveform',
   waveColor: 'orange',
-  progressColor: 'purple',
+  progressColor: 'white',
   height: 80,
   audioContext: audioContext
 });
