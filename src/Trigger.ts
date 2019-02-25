@@ -344,11 +344,15 @@ export default abstract class Trigger{
 
   
     addActiveState(): void{
-        this.triggerElement.classList.add('highlight')
+        if(this.triggerElement.classList.contains('key__white')) this.triggerElement.classList.add('key__white--active');
+        if(this.triggerElement.classList.contains('key__black')) this.triggerElement.classList.add('key__black--active');
+        if(this.triggerElement.classList.contains('drum-pad__pad')) this.triggerElement.classList.add('active-state');
     }
 
     removeActiveState(): void{
-        this.triggerElement.classList.remove('highlight')
+        if(this.triggerElement.classList.contains('key__white--active')) this.triggerElement.classList.remove('key__white--active');
+        if(this.triggerElement.classList.contains('key__black--active')) this.triggerElement.classList.remove('key__black--active');
+        if(this.triggerElement.classList.contains('active-state')) this.triggerElement.classList.remove('active-state');
     }
 
     setStartSliderPos(leftPos: number): void{
