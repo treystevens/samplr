@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
     entry: './src/app.ts',
-    devtool: 'inline-source-map',
+    devtool: 'source-map',
     module: {
         rules: [
         {
@@ -20,5 +20,5 @@ module.exports = {
         path: path.resolve(__dirname, 'public/scripts')
     },
     target: 'web',
-    mode: 'development',
+    mode: 'production',
 };
