@@ -1,12 +1,13 @@
 
-import { masterStreamNode } from './app';
+// import { masterStreamNode } from './app';
 
 export default class AudioTasks{
 
     audioContext: AudioContext
     audioSource:AudioBufferSourceNode
     currentlyRecording: boolean
-    mediaRecorder: MediaRecorder
+    masterStreamNode: any
+    mediaRecorder: any
     metronomeAudioContext: AudioContext
     metronomeAudioBuffer: AudioBuffer
     metronomeUpAudioBuffer: AudioBuffer
@@ -20,6 +21,7 @@ export default class AudioTasks{
     constructor(audioContext: AudioContext){
         this.audioContext = audioContext;
         this.metronomeAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+        this.masterStreamNode = this.audioContext.createMediaStreamDestination();
 
         this.recordBtn = document.querySelector('.audio-tasks__record');
         this.recordingIcon = document.querySelector('.audio-tasks__record-icon');
@@ -135,8 +137,8 @@ export default class AudioTasks{
             mimeType : 'audio/webm\;codecs=opus'
         }
 
-         masterStreamNode = this.audioContext.createMediaStreamDestination();
-         this.mediaRecorder = new MediaRecorder(masterStreamNode.stream, options)
+         this.masterStreamNode = this.audioContext.createMediaStreamDestination();
+         this.mediaRecorder = new window.MediaRecorder(this.masterStreamNode.stream, options)
          this.mediaRecorder.start();
          this.recordingIcon.classList.add('recording'); 
          this.recordBtn.textContent = 'Stop Recording'; 
