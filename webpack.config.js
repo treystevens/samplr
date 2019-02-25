@@ -17,7 +17,7 @@ module.exports = {
     },
     output: {
         filename: 'bundle.js',
-        path: path.resolve(__dirname, 'public/scripts')
+        path: path.resolve(__dirname, 'docs/scripts')
     },
     target: 'web',
     mode: 'production',

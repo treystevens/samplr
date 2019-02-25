@@ -1,5 +1,4 @@
 /node_modules/
-/public/scripts/mattWorker.js
-/public/scripts/recorderWorker.js
-/public/scripts/waveworker.js
-/src/Recorder.ts
+/docs/scripts/mattWorker.js
+/docs/scripts/recorderWorker.js
+/docs/scripts/waveworker.js
