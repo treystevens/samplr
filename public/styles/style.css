@@ -105,13 +105,6 @@ main{
     display: inline-block;
 }
 
-.active-state{
-    color: white;
-    background-color: #FA6F3C;
-    box-shadow: 1px 1px 1px 0 #8B3939;
-}
-
-
 .viewing-message{
     position: fixed;
     top: 0;
@@ -417,8 +410,6 @@ AUDIO CONTROL INPUTS
 
 *********************/
 
-
-
 .sampler__gain-text,
 .sampler__pitch-text,
 .sampler__q-text{
@@ -432,7 +423,6 @@ AUDIO CONTROL INPUTS
     width: 60%;
     height: 20px;
 }
-
 
 .sampler__audio-controls{
     display: flex;  
@@ -569,8 +559,6 @@ USER OPTIONS
     margin-top: 40px;
 }
 
-
-
 .audio-tasks__set-bpm{
     margin-left: 5px;
     width: 35%;
@@ -592,8 +580,7 @@ USER OPTIONS
     pointer-events: none;
     font-size: 2rem;
     color: black;
-    border-radius: 10px;
-    
+    border-radius: 10px; 
 }
 
 .audio-tasks__recording-audio{
@@ -605,8 +592,6 @@ USER OPTIONS
     display: block;
     
 }
-
-
 
 .modal {
     position: fixed;
@@ -637,6 +622,13 @@ USER OPTIONS
     line-height: 1.4rem;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
     top: 30%; 
+}
+
+
+.active-state{
+    color: white;
+    background-color: #FA6F3C;
+    box-shadow: 1px 1px 1px 0 #8B3939;
 }
 
 @media only screen and (max-width: 768px) {
