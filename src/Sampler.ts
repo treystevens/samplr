@@ -51,13 +51,15 @@ export default class Sampler{
                 this.triggerSet[evt.key].removeActiveState();
                 return;
             }
-            if(document.querySelector('.audio-tasks__stop').classList.contains('highlight')){
-                document.querySelector('.audio-tasks__stop').classList.remove('highlight');
+            if(document.querySelector('.audio-tasks__stop').classList.contains('active-state')){
+                document.querySelector('.audio-tasks__stop').classList.remove('active-state');
             }
         })
         
 
         if(iOS) {
+            (document.querySelector('.audio-file') as HTMLInputElement).style.visibility = 'hidden';
+
             window.addEventListener('touchstart', (evt: any) => {
                 if(evt.target.classList.contains('trigger')){
                     this.tapSound(evt);
@@ -114,7 +116,7 @@ export default class Sampler{
 
         // Stop sound when played
         if(evt.key === 'Shift'){
-            document.querySelector('.audio-tasks__stop').classList.add('highlight');
+            document.querySelector('.audio-tasks__stop').classList.add('active-state');
             this.stopSounds();
         }
     }
