@@ -28,7 +28,7 @@ export const hiphopKit: any = [
         key: 'm'
     }, 
     {
-        url: 'https://res.cloudinary.com/dr4eajzak/video/upload/v1550706370/samples/hiphop/KICK_ORDEAL.wav',
+        url: 'https://res.cloudinary.com/dr4eajzak/video/upload/v1550706370/samples/hiphop/KICK.wav',
         key: ','
     }
 ]
